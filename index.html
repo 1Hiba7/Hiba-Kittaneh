@@ -43,6 +43,7 @@
             margin: 0;
             padding: 0;
             font-family: 'Arial', sans-serif;
+            padding-bottom: 80px; /* مساحة لأيقونة اليوتيوب */
         }
 
         /* زر التبديل */
@@ -71,6 +72,34 @@
 
         .theme-toggle:hover i {
             transform: rotate(30deg);
+        }
+
+        /* أيقونة اليوتيوب */
+        .youtube-icon {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #FF0000;
+            color: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .youtube-icon:hover {
+            transform: scale(1.1);
+            background: #cc0000;
+        }
+
+        .youtube-icon i {
+            font-size: 1.5rem;
         }
 
         /* نص متحرك */
@@ -212,11 +241,18 @@
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             }
             
-            .theme-toggle {
+            .theme-toggle, .youtube-icon {
                 bottom: 20px;
-                left: 20px;
                 width: 45px;
                 height: 45px;
+            }
+            
+            .theme-toggle {
+                left: 20px;
+            }
+            
+            .youtube-icon {
+                right: 20px;
             }
         }
     </style>
@@ -227,9 +263,14 @@
         <i class="fas fa-moon"></i>
     </div>
 
+    <!-- أيقونة اليوتيوب -->
+    <a href="https://www.youtube.com/@1Hiba7" target="_blank" class="youtube-icon">
+        <i class="fab fa-youtube"></i>
+    </a>
+
     <!-- نص متحرك -->
     <div class="marquee">
-        <p>أنا الطالبة هبة كتانة من الصف الثامن في مدرسة إناث قلقيلية الشرعية الثانوية</p>
+        <p>تعريف بي: أنا الطالبة هبة كتانة من الصف الثامن في مدرسة إناث قلقيلية الشرعية الثانوية</p>
     </div>
     
     <!-- العنوان الرئيسي -->
@@ -243,20 +284,20 @@
         <h2><i class="fas fa-crown"></i> المواقع المميزة</h2>
         <div class="gallery">
             <!-- استبدل 'images/featured1.png' باسم ملفك الحقيقي -->
-            <div class="card featured" style="animation-delay: 0.4s;">
-                <img src="1.png" alt="نور الإيمان">
+            <div class="card featured" style="animation-delay: 0.1s;">
+                <img src="images/1.png" alt="1">
                 <div class="card-content">
-                    <h3>نور الإيمان</h3>
-                    <a href="nur_al'iiman.html" class="btn">زيارة الموقع</a>
+                    <h3>انتقاء الألوان من الصورة</h3>
+                    <a href="1.html" class="btn">زيارة الموقع</a>
                 </div>
             </div>
             
             <!-- استبدل 'images/featured2.png' باسم ملفك الحقيقي -->
-            <div class="card featured" style="animation-delay: 0.6s;">
-                <img src="2.png" alt="حساب عمرك">
+            <div class="card featured" style="animation-delay: 0.2s;">
+                <img src="images/featured2.png" alt="موقع مميز 2">
                 <div class="card-content">
-                    <h3>حساب عمرك</h3>
-                    <a href="2.html" class="btn">زيارة الموقع</a>
+                    <h3>موقع مميز 2</h3>
+                    <a href="#" class="btn">زيارة الموقع</a>
                 </div>
             </div>
         </div>
