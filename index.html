@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>معرض مواقعي | هبة كتانة</title>
+    <link rel="icon" href="images/Hiba.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #1a1a2e;
+            --secondary-bg: #16213e;
+            --text-color: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --btn-color: #4CAF50;
+            --marquee-bg: rgba(255, 255, 255, 0.1);
+            --featured-bg: rgba(255, 215, 0, 0.1);
+            --transition-speed: 0.8s;
+        }
+
+        .light-mode {
+            --bg-color: #f8f9fa;
+            --secondary-bg: #e9ecef;
+            --text-color: #212529;
+            --card-bg: rgba(0, 0, 0, 0.05);
+            --btn-color: #2E8B57;
+            --marquee-bg: rgba(0, 0, 0, 0.1);
+            --featured-bg: rgba(255, 215, 0, 0.2);
+        }
+
+        * {
+            transition: 
+                background-color var(--transition-speed) ease,
+                color var(--transition-speed) ease,
+                border-color var(--transition-speed) ease,
+                box-shadow var(--transition-speed) ease;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-color), var(--secondary-bg));
+            color: var(--text-color);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* زر التبديل */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: var(--card-bg);
+            border: 2px solid var(--text-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-toggle i {
+            font-size: 1.3rem;
+            color: var(--text-color);
+            transition: transform 0.5s ease;
+        }
+
+        .theme-toggle:hover i {
+            transform: rotate(30deg);
+        }
+
+        /* نص متحرك */
+        .marquee {
+            background: var(--marquee-bg);
+            padding: 12px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .marquee p {
+            display: inline-block;
+            padding-left: 100%;
+            animation: marquee 18s linear infinite;
+            font-size: 18px;
+            margin: 0;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        /* قسم البطاقات المميزة */
+        .featured-section {
+            background: var(--featured-bg);
+            padding: 30px 20px;
+            margin-bottom: 30px;
+            border-top: 2px solid gold;
+            border-bottom: 2px solid gold;
+        }
+
+        .featured-section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: gold;
+        }
+
+        /* قسم البطاقات العادية */
+        .regular-section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s forwards;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card.featured {
+            border: 3px solid gold;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
+        }
+
+        .card.featured::after {
+            content: "★ مميز";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: gold;
+            color: black;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .card:hover img {
+            transform: scale(1.05);
+        }
+
+        .card-content {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 20px;
+            background: var(--btn-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* التجاوبية */
+        @media (max-width: 768px) {
+            .gallery {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            
+            .theme-toggle {
+                bottom: 20px;
+                left: 20px;
+                width: 45px;
+                height: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- زر التبديل -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <!-- نص متحرك -->
+    <div class="marquee">
+        <p>تعريف بي: أنا الطالبة هبة كتانة من الصف الثامن في مدرسة إناث قلقيلية الشرعية الثانوية</p>
+    </div>
+    
+    <!-- العنوان الرئيسي -->
+    <div class="header">
+        <h1>معرض مواقعي</h1>
+        <p>تصفح مجموعة المواقع التي قمت بتطويرها</p>
+    </div>
+    
+    <!-- قسم البطاقات المميزة -->
+    <div class="featured-section">
+        <h2><i class="fas fa-crown"></i> المواقع المميزة</h2>
+        <div class="gallery">
+            <!-- استبدل 'images/featured1.png' باسم ملفك الحقيقي -->
+            <div class="card featured" style="animation-delay: 0.1s;">
+                <img src="1.png" alt="نور الإيمان">
+                <div class="card-content">
+                    <h3>موقع مميز 1</h3>
+                    <a href="nur_al'iiman.html" class="btn">زيارة الموقع</a>
+                </div>
+            </div>
+            
+            <!-- استبدل 'images/featured2.png' باسم ملفك الحقيقي -->
+            <div class="card featured" style="animation-delay: 0.2s;">
+                <img src="images/featured2.png" alt="موقع مميز 2">
+                <div class="card-content">
+                    <h3>موقع مميز 2</h3>
+                    <a href="#" class="btn">زيارة الموقع</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- قسم البطاقات العادية -->
+    <div class="regular-section">
+        <h2><i class="fas fa-th"></i> جميع المواقع</h2>
+        <div class="gallery">
+            <!-- استبدل 'images/site1.png' باسم ملفك الحقيقي -->
+            <div class="card" style="animation-delay: 0.3s;">
+                <img src="images/site1.png" alt="موقع 1">
+                <div class="card-content">
+                    <h3>موقع 1</h3>
+                    <a href="#" class="btn">زيارة الموقع</a>
+                </div>
+            </div>
+            
+            <!-- استبدل 'images/site2.png' باسم ملفك الحقيقي -->
+            <div class="card" style="animation-delay: 0.4s;">
+                <img src="images/site2.png" alt="موقع 2">
+                <div class="card-content">
+                    <h3>موقع 2</h3>
+                    <a href="#" class="btn">زيارة الموقع</a>
+                </div>
+            </div>
+            
+            <!-- استبدل 'images/site3.png' باسم ملفك الحقيقي -->
+            <div class="card" style="animation-delay: 0.5s;">
+                <img src="images/site3.png" alt="موقع 3">
+                <div class="card-content">
+                    <h3>موقع 3</h3>
+                    <a href="#" class="btn">زيارة الموقع</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // تبديل الوضع مع تأثير تدرج بطيء
+        const themeToggle = document.getElementById('themeToggle');
+        const icon = themeToggle.querySelector('i');
+        
+        // تحميل التفضيل المحفوظ
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+            icon.classList.replace('fa-moon', 'fa-sun');
+        }
+
+        // حدث التبديل
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            
+            setTimeout(() => {
+                if (document.body.classList.contains('light-mode')) {
+                    icon.classList.replace('fa-moon', 'fa-sun');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    icon.classList.replace('fa-sun', 'fa-moon');
+                    localStorage.setItem('theme', 'dark');
+                }
+            }, 300);
+        });
+
+        // ظهور البطاقات عند التمرير
+        document.addEventListener("DOMContentLoaded", () => {
+            const cards = document.querySelectorAll(".card");
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = "1";
+                        entry.target.style.transform = "translateY(0)";
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            cards.forEach(card => observer.observe(card));
+        });
+    </script>
+</body>
+</html>
