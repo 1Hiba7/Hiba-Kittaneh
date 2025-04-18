@@ -1,12 +1,4 @@
 <!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="nur_al'iiman.png" type="image/png">
-    <title>موقع نور الإيمان</title>
-    <style>
-        body {<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -16,95 +8,153 @@
     <title>موقع نور الإيمان</title>
     <style>
         /* التنسيق العام */
+        * {
+            box-sizing: border-box;
+        }
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            margin: 0 auto;
+            padding: 0 20px;
             background-color: #fdf5e6;
             color: #333;
             text-align: center;
+            max-width: 1200px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
+
+        /* تحسينات للشاشات الكبيرة */
+        @media (min-width: 1024px) {
+            body {
+                font-size: 18px;
+            }
+            h2 {
+                font-size: 32px;
+                margin-bottom: 30px;
+            }
+            #counter {
+                font-size: 72px;
+            }
+            button, .return-button {
+                font-size: 20px;
+                padding: 12px 24px;
+            }
+            section {
+                padding: 30px;
+            }
+        }
+
+        /* تحسينات للهواتف */
+        @media (max-width: 768px) {
+            body {
+                padding: 0 10px;
+            }
+            nav button {
+                padding: 8px 12px;
+                font-size: 16px;
+                min-width: 120px;
+            }
+            input[type="text"], 
+            input[type="number"] {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+
         header {
             background-color: #006400;
             color: white;
-            padding: 15px 0;
-            font-size: 24px;
+            padding: 20px 0;
+            font-size: 28px;
             font-weight: bold;
             animation: slideDown 1s ease;
+            width: 100%;
         }
+
         nav {
             display: flex;
             justify-content: center;
             background-color: #4682b4;
-            padding: 10px 0;
+            padding: 12px 0;
             flex-wrap: wrap;
+            gap: 10px;
+            width: 100%;
         }
-        /* تنسيق جميع الأزرار مع أنيميشن */
-        button, .return-button, input[type="button"], input[type="submit"] {
+
+        button, .return-button {
             background-color: #f5deb3;
             color: #333;
             border: 2px solid #006400;
-            padding: 10px 20px;
-            border-radius: 5px;
-            margin: 5px;
+            padding: 12px 24px;
+            border-radius: 6px;
             font-size: 18px;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            min-width: 160px;
+            margin: 5px;
         }
-        button:hover, .return-button:hover, input[type="button"]:hover, input[type="submit"]:hover {
+
+        button:hover, .return-button:hover {
             background-color: #daa520;
             transform: scale(1.05);
             box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
         }
-        button:active, .return-button:active, input[type="button"]:active, input[type="submit"]:active {
-            transform: scale(0.98);
-            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
-        }
+
         section {
             display: none;
-            padding: 20px;
+            padding: 25px;
             animation: fadeIn 1s ease-in-out;
+            width: 100%;
+            flex-grow: 1;
         }
+
         section.active {
             display: block;
         }
+
         .return-button {
-            display: block;
-            margin: 20px auto;
+            display: inline-block;
+            margin: 25px auto;
             background-color: #006400;
             color: white;
-            text-align: center;
-            padding: 10px 20px;
-            border-radius: 5px;
             text-decoration: none;
-            width: fit-content;
         }
+
         h2 {
             color: #006400;
+            margin-top: 0;
+            font-size: 28px;
         }
+
         /* جدول مواقيت الصلاة */
         table {
-            margin: 20px auto;
-            width: 80%;
+            margin: 25px auto;
+            width: 100%;
+            max-width: 800px;
             border-collapse: collapse;
             background-color: #fdf5e6;
             animation: fadeIn 1.5s ease;
         }
+
         table th, table td {
             border: 1px solid #006400;
-            padding: 10px;
+            padding: 12px;
             text-align: center;
         }
+
         table th {
             background-color: #006400;
             color: white;
+            font-size: 18px;
         }
+
         table tr:hover {
             background-color: #e8f8e8;
-            transform: scale(1.01);
             transition: all 0.2s ease;
         }
+
         /* عداد التسبيح */
         #counter {
             font-size: 64px;
@@ -112,15 +162,33 @@
             margin: 20px 0;
             animation: pulse 2s infinite;
         }
+
         .button-group {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 15px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
             margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
         }
+
         .goal-section {
-            margin-top: 20px;
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
         }
+
         /* العد التنازلي */
         #ramadanCountdown, #fitrCountdown, #adhaCountdown {
             font-size: 25px;
@@ -128,48 +196,48 @@
             margin: 20px 0;
             animation: fadeIn 2s ease;
         }
+
         #ramadan, #fitr, #adha {
             font-size: 25px;
             font-weight: bold;
             color: #006400;
-            margin: 10px 0;
+            margin: 15px 0;
         }
+
         /* الأذكار */
         .azkar-buttons {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
+            gap: 15px;
+            margin: 25px 0;
+            flex-wrap: wrap;
         }
+
         #azkarContent {
             background-color: #f5deb3;
-            padding: 20px;
+            padding: 25px;
             border-radius: 10px;
-            margin: 20px auto;
-            max-width: 600px;
+            margin: 25px auto;
+            max-width: 800px;
             animation: fadeIn 1s ease;
         }
-        /* رسالة التحميل */
-        .loading {
-            display: none;
-            font-size: 18px;
-            color: #006400;
-            margin: 20px 0;
-        }
-        /* تحسين حقول الإدخال */
+
+        /* حقول الإدخال */
         input[type="text"], 
-        input[type="number"] {
-            padding: 10px;
+        input[type="number"],
+        input[type="checkbox"] {
+            padding: 12px;
             border: 2px solid #006400;
-            border-radius: 5px;
+            border-radius: 6px;
             font-size: 16px;
-            margin: 5px;
             background-color: #f5deb3;
             color: #333;
             transition: all 0.3s ease;
             text-align: center;
-            width: 200px;
+            width: 250px;
+            max-width: 100%;
         }
+
         input[type="text"]:focus, 
         input[type="number"]:focus {
             outline: none;
@@ -177,45 +245,40 @@
             box-shadow: 0 0 8px rgba(218, 165, 32, 0.6);
             transform: scale(1.02);
         }
+
         input[type="text"]::placeholder {
             color: #999;
             text-align: center;
         }
-        /* تنسيق خاص لخانة الهدف اليومي */
-        .goal-section input[type="number"] {
-            width: 80px;
-            margin-left: 10px;
+
+        label {
+            font-size: 18px;
+            margin: 5px;
         }
+
+        /* رسالة التحميل */
+        .loading {
+            display: none;
+            font-size: 18px;
+            color: #006400;
+            margin: 20px 0;
+        }
+
         /* تأثيرات الحركة */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
         @keyframes slideDown {
             from { transform: translateY(-50px); }
             to { transform: translateY(0); }
         }
+
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
-        }
-        /* التنسيق للهواتف */
-        @media (max-width: 768px) {
-            nav button {
-                padding: 8px 16px;
-                font-size: 16px;
-            }
-            table {
-                width: 95%;
-            }
-            #counter {
-                font-size: 48px;
-            }
-            input[type="text"], 
-            input[type="number"] {
-                width: 150px;
-            }
         }
     </style>
 </head>
@@ -481,286 +544,6 @@
         function showAzkar(time) {
             const azkarContent = document.getElementById('azkarContent');
             azkarContent.innerHTML = azkar[time].map(item => `<p>${item}</p>`).join('');
-        }
-    </script>
-</body>
-</html>
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #fdf5e6; /* لون بيج */
-            color: #333;
-            text-align: center;
-        }
-        header {
-            background-color: #006400; /* أخضر داكن */
-            color: white;
-            padding: 15px 0;
-            font-size: 24px;
-            font-weight: bold;
-            animation: slideDown 1s ease;
-        }
-        nav {
-            display: flex;
-            justify-content: center;
-            background-color: #4682b4; /* أزرق سماوي */
-            padding: 10px 0;
-        }
-        nav button {
-            background-color: #f5deb3; /* لون بيج فاتح */
-            color: #333;
-            border: 2px solid #006400;
-            padding: 10px 20px;
-            border-radius: 5px;
-            margin: 5px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-        nav button:hover {
-            background-color: #daa520; /* ذهبي */
-            transform: scale(1.1);
-        }
-        section {
-            display: none;
-            padding: 20px;
-            animation: fadeIn 1s ease-in-out;
-        }
-        section.active {
-            display: block;
-        }
-        .return-button {
-            display: block;
-            margin: 20px auto;
-            background-color: #006400;
-            color: white;
-            text-align: center;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            transition: background-color 0.3s, transform 0.3s;
-            width: fit-content;
-        }
-        .return-button:hover {
-            background-color: #2c6f2f;
-            transform: scale(1.1);
-        }
-        h2 {
-            color: #006400;
-        }
-        table {
-            margin: 20px auto;
-            width: 80%;
-            border-collapse: collapse;
-            background-color: #fdf5e6;
-        }
-        table th, table td {
-            border: 1px solid #006400;
-            padding: 10px;
-            text-align: center;
-        }
-        table th {
-            background-color: #006400; /* خلفية العناوين باللون الأخضر الداكن */
-            color: white;
-        }
-        table td:nth-child(odd) {
-            background-color: #f5deb3; /* خليط لون بيج فاتح في الأعمدة الفردية */
-        }
-        table td:nth-child(even) {
-            background-color: #e8f8e8; /* خليط لون أخضر فاتح في الأعمدة الزوجية */
-        }
-        button, input {
-            background-color: #f5deb3;
-            color: #333;
-            border: 1px solid #006400;
-            border-radius: 5px;
-            padding: 10px;
-            margin: 10px;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-        button:hover, input:hover {
-            background-color: #daa520;
-            transform: scale(1.05);
-        }
-        #counter {
-            font-size: 64px; /* حجم أكبر */
-            color: #daa520; /* ذهبي */
-            margin: 20px 0;
-        }
-        /* تكبير حجم العد التنازلي للمناسبات */
-        #ramadanCountdown, #fitrCountdown, #adhaCountdown {
-            font-size: 25px; /* حجم أكبر */
-            color: #006400; /* أخضر داكن */
-            margin: 20px 0;
-        }
-        /* تكبير نص الفعالية */
-        #ramadan, #fitr, #adha {
-            font-size: 25px; /* تكبير النص */
-            font-weight: bold;
-            color: #006400; /* أخضر داكن */
-            margin: 10px 0;
-        }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        @keyframes slideDown {
-            from {
-                transform: translateY(-50px);
-            }
-            to {
-                transform: translateY(0);
-            }
-        }
-    </style>
-</head>
-<body>
-    <header>
-        موقع نور الإيمان
-    </header>
-    <nav>
-        <button onclick="showSection('prayerTimes')">مواقيت الصلاة</button>
-        <button onclick="showSection('tasbeehCounter')">عداد التسبيح</button>
-        <button onclick="showSection('countdown')">العد التنازلي</button>
-    </nav>
-
-    <section id="prayerTimes" class="active">
-        <h2>مواقيت الصلاة</h2>
-        <label for="city">اسم المدينة:</label>
-        <input id="city" type="text" placeholder="قلقيلية" value="قلقيلية">
-        <button onclick="getPrayerTimes()">عرض المواقيت</button>
-        <table id="prayerTimesTable">
-            <thead>
-                <tr>
-                    <th>الصلاة</th>
-                    <th>الوقت</th>
-                </tr>
-            </thead>
-            <tbody id="prayerTimesBody"></tbody>
-        </table>
-    </section>
-
-    <section id="tasbeehCounter">
-        <h2>عداد التسبيح</h2>
-        <label for="usedBefore">هل استخدمت الموقع من قبل؟</label>
-        <input type="checkbox" id="usedBefore" onchange="togglePreviousCount()">
-        <div id="previousCountDiv" style="display: none;">
-            <label for="previousCount">أدخل عدد المرات السابقة:</label>
-            <input type="number" id="previousCount" value="0" min="0" oninput="validateInput(this)" onchange="setPreviousCount()">
-        </div>
-        <div id="counter">0</div>
-        <div>
-            <button onclick="decrement()">-</button>
-            <button onclick="increment()">+</button>
-        </div>
-    </section>
-
-    <section id="countdown">
-        <h2>العد التنازلي للمناسبات الدينية</h2>
-        <div id="ramadan">رمضان: <span id="ramadanCountdown"></span></div>
-        <div id="fitr">عيد الفطر: <span id="fitrCountdown"></span></div>
-        <div id="adha">عيد الأضحى: <span id="adhaCountdown"></span></div>
-    </section>
-
-    <a href="https://1hiba7.github.io/Hiba-Kittaneh/" class="return-button">العودة إلى الصفحة الرئيسية</a>
-
-    <script>
-        const prayerNames = {
-            Fajr: "الفجر",
-            Sunrise: "الشروق",
-            Sunset: "غروب الشمس",
-            Dhuhr: "الظهر",
-            Asr: "العصر",
-            Maghrib: "المغرب",
-            Isha: "العشاء",
-            Imsak: "الإمساك",
-            Midnight: "منتصف الليل",
-            Firstthird: "الثلث الأول",
-            Lastthird: "الثلث الأخير"
-        };
-
-        function showSection(sectionId) {
-            const sections = document.querySelectorAll("section");
-            sections.forEach(section => {
-                section.classList.remove("active");
-            });
-
-            const targetSection = document.getElementById(sectionId);
-            targetSection.classList.add("active");
-        }
-
-        async function getPrayerTimes() {
-            const city = document.getElementById("city").value || "قلقيلية";
-            const apiUrl = `https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(city)}&country=Palestine&method=2`;
-            const response = await fetch(apiUrl);
-            const data = await response.json();
-            const timings = data.data.timings;
-            const body = document.getElementById("prayerTimesBody");
-            body.innerHTML = "";
-            for (const [prayer, time] of Object.entries(timings)) {
-                body.innerHTML += `<tr><td>${prayerNames[prayer] || prayer}</td><td>${time}</td></tr>`;
-            }
-        }
-
-        function countdown(targetDate, elementId) {
-            function updateCountdown() {
-                const now = new Date().getTime();
-                const diff = targetDate - now;
-
-                if (diff <= 0) {
-                    document.getElementById(elementId).innerText = "انتهى العد التنازلي";
-                    return;
-                }
-
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-                document.getElementById(elementId).innerText = `${days} يوم ${hours} ساعة ${minutes} دقيقة ${seconds} ثانية`;
-                setTimeout(updateCountdown, 1000);
-            }
-
-            updateCountdown();
-        }
-
-        countdown(new Date('2026-02-18').getTime(), 'ramadanCountdown');
-        countdown(new Date('2026-03-20').getTime(), 'fitrCountdown');
-        countdown(new Date('2025-06-07').getTime(), 'adhaCountdown');
-
-        let count = 0;
-        function increment() {
-            count++;
-            document.getElementById('counter').textContent = count;
-        }
-        function decrement() {
-            if (count > 0) count--;
-            document.getElementById('counter').textContent = count;
-        }
-
-        function togglePreviousCount() {
-            const div = document.getElementById('previousCountDiv');
-            div.style.display = document.getElementById('usedBefore').checked ? 'block' : 'none';
-            if (!document.getElementById('usedBefore').checked) {
-                count = 0;
-                document.getElementById('counter').textContent = count;
-            }
-        }
-
-        function setPreviousCount() {
-            const previousCount = parseInt(document.getElementById('previousCount').value);
-            count = isNaN(previousCount) ? 0 : previousCount;
-            document.getElementById('counter').textContent = count;
-        }
-
-        function validateInput(input) {
-            if (input.value < 0) input.value = 0;
         }
     </script>
 </body>
