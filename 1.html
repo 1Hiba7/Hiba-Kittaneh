@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أداة انتقاء الألوان من الصور</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --text-color: #212529;
+            --primary-color: #4a6bdf;
+            --secondary-color: #6c8eff;
+            --card-bg: #ffffff;
+            --border-color: #dee2e6;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dark-mode {
+            --bg-color: #1a1a2e;
+            --text-color: #f8f9fa;
+            --primary-color: #6c8eff;
+            --secondary-color: #8fa3ff;
+            --card-bg: #16213e;
+            --border-color: #2d3748;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            padding: 0 50px;
+        }
+        
+        .description {
+            color: var(--text-color);
+            opacity: 0.8;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+        
+        .theme-toggle {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .theme-toggle:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .upload-section {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            text-align: center;
+            border: 1px dashed var(--border-color);
+        }
+        
+        .upload-btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            border: none;
+        }
+        
+        .upload-btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        #fileInput {
+            display: none;
+        }
+        
+        .image-preview-container {
+            position: relative;
+            margin: 20px auto;
+            max-width: 100%;
+            overflow: hidden;
+        }
+        
+        .image-preview {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 8px;
+            display: none;
+            box-shadow: var(--shadow);
+            cursor: crosshair;
+        }
+        
+        .zoom-lens {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 2px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+            display: none;
+            z-index: 10;
+            background-repeat: no-repeat;
+            background-size: 200% 200%;
+        }
+        
+        .selected-color-container {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px auto;
+            box-shadow: var(--shadow);
+            display: none;
+            max-width: 600px;
+        }
+        
+        .selected-color-header {
+            text-align: center;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+        
+        .selected-color-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .color-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+        
+        .color-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .color-formats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .color-format {
+            padding: 10px;
+            border-radius: 5px;
+            background-color: rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        
+        .format-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+        
+        .format-value {
+            word-break: break-all;
+            margin-bottom: 5px;
+        }
+        
+        .copy-format-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .copy-format-btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .color-palette {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            display: none;
+        }
+        
+        .color-card {
+            width: 120px;
+            height: 240px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .color-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .color-display {
+            height: 100px;
+            width: 100%;
+        }
+        
+        .color-info {
+            padding: 10px;
+            background-color: var(--card-bg);
+            text-align: center;
+            font-size: 0.9rem;
+            height: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .color-hex {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .color-rgb {
+            opacity: 0.7;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+        
+        .copy-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .copy-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .home-link {
+            display: block;
+            margin: 30px auto;
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            box-shadow: var(--shadow);
+            text-align: center;
+            width: fit-content;
+        }
+
+        .home-link:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .theme-toggle {
+                top: 10px;
+                transform: none;
+            }
+            
+            .color-card {
+                width: 100px;
+                height: 170px;
+            }
+            
+            .color-display {
+                height: 80px;
+            }
+            
+            .color-formats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .upload-section {
+                padding: 20px;
+            }
+            
+            .color-card {
+                width: 80px;
+                height: 160px;
+            }
+            
+            .color-display {
+                height: 70px;
+            }
+            
+            .color-formats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button class="theme-toggle" id="themeToggle">🌓</button>
+            <h1>أداة انتقاء الألوان من الصور</h1>
+            <p class="description">قم بتحميل صورة لاستخراج الألوان السائدة وإنشاء لوحة ألوان مخصصة</p>
+        </header>
+        
+        <div class="upload-section">
+            <input type="file" id="fileInput" accept="image/*">
+            <button class="upload-btn" id="uploadBtn">اختر صورة</button>
+            <p>أو اسحب وأسقط الصورة هنا</p>
+            <div class="image-preview-container">
+                <img id="imagePreview" class="image-preview" alt="معاينة الصورة">
+                <div class="zoom-lens" id="zoomLens"></div>
+            </div>
+        </div>
+        
+        <div id="selectedColorContainer" class="selected-color-container">
+            <div class="selected-color-header">اللون المحدد</div>
+            <div class="selected-color-display">
+                <div id="colorCircle" class="color-circle"></div>
+                <div id="colorName" class="color-name"></div>
+            </div>
+            <div class="color-formats" id="colorFormats"></div>
+        </div>
+        
+        <div id="colorPalette" class="color-palette"></div>
+
+        <a href="https://1hiba7.github.io/Hiba-Kittaneh/" class="home-link">العودة إلى الصفحة الرئيسية</a>
+    </div>
+    
+    <footer>
+        <p>© 2023 أداة انتقاء الألوان | تم التطوير باستخدام HTML5 وCanvas وJavaScript</p>
+    </footer>
+
+    <script>
+        // العناصر الرئيسية
+        const fileInput = document.getElementById('fileInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const imagePreview = document.getElementById('imagePreview');
+        const colorPalette = document.getElementById('colorPalette');
+        const themeToggle = document.getElementById('themeToggle');
+        const selectedColorContainer = document.getElementById('selectedColorContainer');
+        const colorCircle = document.getElementById('colorCircle');
+        const colorName = document.getElementById('colorName');
+        const colorFormats = document.getElementById('colorFormats');
+        const zoomLens = document.getElementById('zoomLens');
+        
+        // تحميل الصورة
+        uploadBtn.addEventListener('click', () => fileInput.click());
+        
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    imagePreview.src = event.target.result;
+                    imagePreview.style.display = 'block';
+                    imagePreview.onload = function() {
+                        extractColors(imagePreview);
+                        setupColorPicker(imagePreview);
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // سحب وإسقاط الصورة
+        const uploadSection = document.querySelector('.upload-section');
+        
+        uploadSection.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadSection.style.borderColor = '#4a6bdf';
+            uploadSection.style.backgroundColor = 'rgba(74, 107, 223, 0.1)';
+        });
+        
+        uploadSection.addEventListener('dragleave', () => {
+            uploadSection.style.borderColor = 'var(--border-color)';
+            uploadSection.style.backgroundColor = 'var(--card-bg)';
+        });
+        
+        uploadSection.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadSection.style.borderColor = 'var(--border-color)';
+            uploadSection.style.backgroundColor = 'var(--card-bg)';
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.match('image.*')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    imagePreview.src = event.target.result;
+                    imagePreview.style.display = 'block';
+                    imagePreview.onload = function() {
+                        extractColors(imagePreview);
+                        setupColorPicker(imagePreview);
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // استخراج الألوان من الصورة
+        function extractColors(img) {
+            colorPalette.innerHTML = '';
+            colorPalette.style.display = 'flex';
+            selectedColorContainer.style.display = 'none';
+            
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const width = img.naturalWidth;
+            const height = img.naturalHeight;
+            
+            // تحديد حجم مناسب للتحليل
+            const maxSize = 200;
+            let ratio = 1;
+            if (width > height && width > maxSize) {
+                ratio = maxSize / width;
+            } else if (height > maxSize) {
+                ratio = maxSize / height;
+            }
+            
+            canvas.width = width * ratio;
+            canvas.height = height * ratio;
+            
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            // تحليل الألوان
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+            const colorMap = {};
+            
+            for (let i = 0; i < imageData.length; i += 4) {
+                const r = imageData[i];
+                const g = imageData[i + 1];
+                const b = imageData[i + 2];
+                const a = imageData[i + 3];
+                
+                if (a < 255 / 2) continue; // تجاهل البكسلات الشفافة
+                
+                const hex = rgbToHex(r, g, b);
+                
+                if (colorMap[hex]) {
+                    colorMap[hex].count++;
+                } else {
+                    colorMap[hex] = { r, g, b, count: 1 };
+                }
+            }
+            
+            // تحويل إلى مصفوفة وترتيب حسب التكرار
+            const colorsArray = Object.values(colorMap);
+            colorsArray.sort((a, b) => b.count - a.count);
+            
+            // عرض الألوان الأكثر شيوعًا (12 لون)
+            const topColors = colorsArray.slice(0, 12);
+            displayColors(topColors);
+        }
+        
+        // عرض الألوان في لوحة الألوان
+        function displayColors(colors) {
+            colors.forEach(color => {
+                const hex = rgbToHex(color.r, color.g, color.b);
+                const rgb = `RGB: ${color.r}, ${color.g}, ${color.b}`;
+                
+                const colorCard = document.createElement('div');
+                colorCard.className = 'color-card';
+                colorCard.innerHTML = `
+                    <div class="color-display" style="background-color: ${hex};"></div>
+                    <div class="color-info">
+                        <div>
+                            <div class="color-hex">${hex}</div>
+                            <div class="color-rgb">${rgb}</div>
+                        </div>
+                        <button class="copy-btn" data-hex="${hex}" data-rgb="${rgb}">نسخ اللون</button>
+                    </div>
+                `;
+                
+                colorCard.querySelector('.copy-btn').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const hexToCopy = this.getAttribute('data-hex');
+                    copyToClipboard(hexToCopy);
+                    showTooltip(this, 'تم النسخ!');
+                });
+                
+                colorPalette.appendChild(colorCard);
+            });
+        }
+        
+        // أداة انتقاء اللون من الصورة مع عدسة التكبير
+        function setupColorPicker(img) {
+            // إزالة أي عدسات تكبير موجودة مسبقًا
+            while (zoomLens.firstChild) {
+                zoomLens.removeChild(zoomLens.firstChild);
+            }
+            
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            // إنشاء canvas للعدسة المكبرة
+            const zoomCanvas = document.createElement('canvas');
+            zoomCanvas.width = 100;
+            zoomCanvas.height = 100;
+            const zoomCtx = zoomCanvas.getContext('2d');
+            zoomLens.appendChild(zoomCanvas);
+            
+            // إعداد حركة العدسة المكبرة
+            imagePreview.addEventListener('mousemove', (e) => {
+                const rect = imagePreview.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // حساب موضع العدسة في الصورة الأصلية
+                const imgX = x * (img.naturalWidth / rect.width);
+                const imgY = y * (img.naturalHeight / rect.height);
+                
+                // عرض عدسة التكبير
+                zoomLens.style.display = 'block';
+                zoomLens.style.left = (x - 50) + 'px';
+                zoomLens.style.top = (y - 50) + 'px';
+                
+                // رسم الجزء المكبر
+                zoomCtx.clearRect(0, 0, zoomCanvas.width, zoomCanvas.height);
+                zoomCtx.drawImage(
+                    img,
+                    Math.max(0, imgX - 20), Math.max(0, imgY - 20), 
+                    Math.min(40, img.naturalWidth - imgX + 20), Math.min(40, img.naturalHeight - imgY + 20),
+                    0, 0, 100, 100
+                );
+                
+                // إضافة مؤشر للون المحدد
+                zoomCtx.beginPath();
+                zoomCtx.arc(50, 50, 5, 0, 2 * Math.PI);
+                zoomCtx.strokeStyle = 'white';
+                zoomCtx.lineWidth = 2;
+                zoomCtx.stroke();
+            });
+            
+            imagePreview.addEventListener('mouseout', () => {
+                zoomLens.style.display = 'none';
+            });
+            
+            imagePreview.addEventListener('click', (e) => {
+                const rect = imagePreview.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const imgX = Math.round(x * (img.naturalWidth / rect.width));
+                const imgY = Math.round(y * (img.naturalHeight / rect.height));
+                
+                const pixel = ctx.getImageData(imgX, imgY, 1, 1).data;
+                const r = pixel[0];
+                const g = pixel[1];
+                const b = pixel[2];
+                
+                // تجاهل إذا كان اللون شفافاً تماماً
+                if (pixel[3] === 0) return;
+                
+                const hex = rgbToHex(r, g, b);
+                const name = getColorName(hex);
+                const rgb = `${r}, ${g}, ${b}`;
+                const hsl = rgbToHsl(r, g, b);
+                const cmyk = rgbToCmyk(r, g, b);
+                
+                // عرض اللون المحدد
+                colorCircle.style.backgroundColor = hex;
+                colorName.textContent = name;
+                colorName.style.color = hex;
+                
+                // عرض صيغ الألوان المختلفة
+                colorFormats.innerHTML = `
+                    <div class="color-format">
+                        <div class="format-label">HEX</div>
+                        <div class="format-value">${hex}</div>
+                        <button class="copy-format-btn" data-color="${hex}">نسخ</button>
+                    </div>
+                    <div class="color-format">
+                        <div class="format-label">RGB</div>
+                        <div class="format-value">${rgb}</div>
+                        <button class="copy-format-btn" data-color="rgb(${rgb})">نسخ</button>
+                    </div>
+                    <div class="color-format">
+                        <div class="format-label">HSL</div>
+                        <div class="format-value">${hsl}</div>
+                        <button class="copy-format-btn" data-color="hsl(${hsl})">نسخ</button>
+                    </div>
+                    <div class="color-format">
+                        <div class="format-label">CMYK</div>
+                        <div class="format-value">${cmyk}</div>
+                        <button class="copy-format-btn" data-color="cmyk(${cmyk})">نسخ</button>
+                    </div>
+                `;
+                
+                // إضافة أحداث النسخ لأزرار النسخ
+                document.querySelectorAll('.copy-format-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        copyToClipboard(this.getAttribute('data-color'));
+                        showTooltip(this, 'تم النسخ!');
+                    });
+                });
+                
+                selectedColorContainer.style.display = 'block';
+            });
+        }
+        
+        // تحويل RGB إلى HEX
+        function rgbToHex(r, g, b) {
+            return '#' + [r, g, b].map(x => {
+                const hex = x.toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            }).join('');
+        }
+        
+        // تحويل RGB إلى HSL
+        function rgbToHsl(r, g, b) {
+            r /= 255, g /= 255, b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+
+            return `${Math.round(h * 360)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%`;
+        }
+        
+        // تحويل RGB إلى CMYK
+        function rgbToCmyk(r, g, b) {
+            let c, m, y, k;
+            
+            r = r / 255;
+            g = g / 255;
+            b = b / 255;
+            
+            k = Math.min(1 - r, 1 - g, 1 - b);
+            
+            if (k === 1) {
+                c = m = y = 0;
+            } else {
+                c = (1 - r - k) / (1 - k);
+                m = (1 - g - k) / (1 - k);
+                y = (1 - b - k) / (1 - k);
+            }
+            
+            return `${Math.round(c * 100)}%, ${Math.round(m * 100)}%, ${Math.round(y * 100)}%, ${Math.round(k * 100)}%`;
+        }
+        
+        // الحصول على اسم تقريبي للون
+        function getColorName(hex) {
+            const colorMap = {
+                '#000000': 'أسود',
+                '#ffffff': 'أبيض',
+                '#ff0000': 'أحمر',
+                '#00ff00': 'أخضر',
+                '#0000ff': 'أزرق',
+                '#ffff00': 'أصفر',
+                '#ff00ff': 'أرجواني',
+                '#00ffff': 'سماوي',
+                '#ffa500': 'برتقالي',
+                '#808080': 'رمادي',
+                '#a52a2a': 'بني',
+                '#ffc0cb': 'وردي',
+                '#800080': 'بنفسجي',
+                '#008000': 'أخضر غامق',
+                '#000080': 'أزرق بحري',
+            };
+            
+            return colorMap[hex.toLowerCase()] || 'لون مخصص';
+        }
+        
+        // نسخ إلى الحافظة
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        }
+        
+        // عرض رسالة تأكيد النسخ
+        function showTooltip(element, message) {
+            const tooltip = document.createElement('div');
+            tooltip.textContent = message;
+            tooltip.style.position = 'absolute';
+            tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+            tooltip.style.color = 'white';
+            tooltip.style.padding = '5px 10px';
+            tooltip.style.borderRadius = '5px';
+            tooltip.style.fontSize = '0.8rem';
+            tooltip.style.zIndex = '1000';
+            
+            const rect = element.getBoundingClientRect();
+            tooltip.style.left = (rect.left + rect.width / 2 - 40) + 'px';
+            tooltip.style.top = (rect.top - 30) + 'px';
+            
+            document.body.appendChild(tooltip);
+            
+            setTimeout(() => {
+                tooltip.remove();
+            }, 1000);
+        }
+        
+        // تبديل الوضع الليلي/النهاري
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        });
+        
+        // التحقق من الوضع المحفوظ
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+</body>
+</html>
