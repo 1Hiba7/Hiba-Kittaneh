@@ -1,146 +1,251 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>آلة حاسبة علمية</title>
-    <link rel="icon" href="6.png" type="image/png">
+    <title>آلة حاسبة علمية متطورة</title>
     <style>
+        :root {
+            --bg-color: #282c34;
+            --calc-bg: #333;
+            --header-bg: #444;
+            --header-color: #ffcc00;
+            --display-bg: #222;
+            --display-color: #fff;
+            --btn-bg: #555;
+            --btn-color: #fff;
+            --btn-hover: #666;
+            --operator-bg: #ff5733;
+            --operator-hover: #ff4500;
+            --scientific-bg: #28a745;
+            --scientific-hover: #218838;
+            --clear-bg: #dc3545;
+            --clear-hover: #c82333;
+            --reset-bg: #8B0000;
+            --reset-hover: #A52A2A;
+            --equals-bg: #007bff;
+            --equals-hover: #0056b3;
+            --home-btn-bg: #ffc107;
+            --home-btn-hover: #e0a800;
+        }
+
+        .light-mode {
+            --bg-color: #f5f5f5;
+            --calc-bg: #ffffff;
+            --header-bg: #eeeeee;
+            --header-color: #333;
+            --display-bg: #f0f0f0;
+            --display-color: #333;
+            --btn-bg: #e0e0e0;
+            --btn-color: #333;
+            --btn-hover: #d0d0d0;
+            --operator-bg: #ff7043;
+            --operator-hover: #ff5722;
+            --scientific-bg: #66bb6a;
+            --scientific-hover: #4caf50;
+            --clear-bg: #ef5350;
+            --clear-hover: #e53935;
+            --reset-bg: #B22222;
+            --reset-hover: #CD5C5C;
+            --equals-bg: #42a5f5;
+            --equals-hover: #1e88e5;
+            --home-btn-bg: #ffee58;
+            --home-btn-hover: #ffd600;
+        }
+
         body {
             font-family: 'Arial', sans-serif;
             text-align: center;
-            background-color: #282c34;
+            background-color: var(--bg-color);
             margin: 0;
             padding: 0;
-            color: white;
+            color: var(--display-color);
+            transition: all 0.3s ease;
         }
 
         .calculator {
             width: 100%;
-            max-width: 350px;
-            margin: 50px auto;
-            background: #333;
-            border-radius: 20px;
+            max-width: 400px;
+            margin: 20px auto;
+            background: var(--calc-bg);
+            border-radius: 15px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
             overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .calculator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--header-bg);
+            padding: 10px 20px;
         }
 
         .calculator-header h1 {
-            background: #444;
-            padding: 20px;
             margin: 0;
-            font-size: 1.5rem;
-            color: #ffcc00;
+            font-size: 1.3rem;
+            color: var(--header-color);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--header-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .display-container {
+            padding: 10px 20px;
         }
 
         #display {
-            width: calc(100% - 20px);
-            height: 50px;
-            font-size: 20px;
-            text-align: right;
-            padding: 10px;
+            width: 100%;
+            height: 60px;
+            font-size: 28px;
+            text-align: left;
+            padding: 5px 10px;
             border: none;
             outline: none;
-            background: #222;
-            color: #fff;
+            background: var(--display-bg);
+            color: var(--display-color);
             white-space: nowrap;
             overflow-x: auto;
             text-overflow: ellipsis;
             direction: ltr;
-            margin: 10px auto;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .error {
+            color: #ff4444 !important;
         }
 
         .buttons {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            padding: 20px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            padding: 15px;
         }
 
         button {
-            padding: 20px;
-            font-size: 18px;
+            padding: 15px 5px;
+            font-size: 16px;
             border: none;
-            border-radius: 10px;
-            background: #555;
-            color: #fff;
+            border-radius: 8px;
+            background: var(--btn-bg);
+            color: var(--btn-color);
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        button:active {
+            transform: scale(0.95);
         }
 
         button:hover {
-            background: #666;
+            background: var(--btn-hover);
         }
 
         button.operator {
-            background: #ff5733;
+            background: var(--operator-bg);
         }
 
         button.operator:hover {
-            background: #ff4500;
+            background: var(--operator-hover);
         }
 
         button.scientific {
-            background: #28a745;
+            background: var(--scientific-bg);
+            font-size: 14px;
         }
 
         button.scientific:hover {
-            background: #218838;
+            background: var(--scientific-hover);
         }
 
         button.clear {
-            background: #dc3545;
+            background: var(--clear-bg);
         }
 
         button.clear:hover {
-            background: #c82333;
+            background: var(--clear-hover);
+        }
+
+        button.reset {
+            background: var(--reset-bg);
+        }
+
+        button.reset:hover {
+            background: var(--reset-hover);
         }
 
         button.equals {
-            background: #007bff;
+            background: var(--equals-bg);
             grid-column: span 2;
         }
 
         button.equals:hover {
-            background: #0056b3;
+            background: var(--equals-hover);
         }
 
         button.home-btn {
             width: 100%;
-            padding: 15px;
-            background: #ffc107;
+            padding: 12px;
+            background: var(--home-btn-bg);
             border: none;
-            border-radius: 0 0 20px 20px;
-            font-size: 18px;
+            border-radius: 0 0 15px 15px;
+            font-size: 16px;
             cursor: pointer;
             transition: background 0.3s;
+            color: #333;
         }
 
         button.home-btn:hover {
-            background: #e0a800;
+            background: var(--home-btn-hover);
         }
 
-        @media (max-width: 600px) {
+        .history {
+            max-height: 80px;
+            overflow-y: auto;
+            margin: 0 15px 10px;
+            padding: 8px;
+            background: var(--display-bg);
+            border-radius: 5px;
+            text-align: left;
+            direction: ltr;
+            font-size: 14px;
+        }
+
+        .history-item {
+            padding: 3px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+
+        @media (max-width: 500px) {
+            .calculator {
+                max-width: 95%;
+                margin: 10px auto;
+            }
+            
             .buttons {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(5, 1fr);
+                gap: 6px;
+                padding: 10px;
             }
-            #display {
-                font-size: 18px;
-                height: 45px;
-            }
-        }
-
-        @media (max-width: 400px) {
-            #display {
-                font-size: 16px;
-                height: 40px;
-            }
+            
             button {
-                padding: 15px;
-                font-size: 16px;
+                padding: 12px 2px;
+                font-size: 14px;
             }
-            .buttons {
-                grid-template-columns: repeat(4, 1fr);
+            
+            #display {
+                font-size: 24px;
+                height: 50px;
             }
         }
     </style>
@@ -149,149 +254,403 @@
     <div class="calculator">
         <div class="calculator-header">
             <h1>آلة حاسبة علمية</h1>
+            <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
         </div>
-        <input type="text" id="display" readonly>
+        
+        <div class="display-container">
+            <input type="text" id="display" readonly>
+            <div class="history" id="history"></div>
+        </div>
+        
         <div class="buttons">
-            <!-- الأزرار الأساسية -->
+            <!-- الصف الأول: الوظائف العلمية والمتقدمة -->
+            <button class="scientific" onclick="calculateSecondFunction('sin')">sin</button>
+            <button class="scientific" onclick="calculateSecondFunction('cos')">cos</button>
+            <button class="scientific" onclick="calculateSecondFunction('tan')">tan</button>
+            <button class="scientific" onclick="calculateSqrt()">√</button>
+            <button class="scientific" onclick="calculatePower()">x^y</button>
+            
+            <!-- الصف الثاني: الوظائف العلمية -->
+            <button class="scientific" onclick="calculateSecondFunction('sin⁻¹')">sin⁻¹</button>
+            <button class="scientific" onclick="calculateSecondFunction('cos⁻¹')">cos⁻¹</button>
+            <button class="scientific" onclick="calculateSecondFunction('tan⁻¹')">tan⁻¹</button>
+            <button class="scientific" onclick="calculateSquare()">x²</button>
+            <button class="scientific" onclick="calculateCubeRoot()">³√</button>
+            
+            <!-- الصف الثالث: الوظائف العلمية -->
+            <button class="scientific" onclick="calculateSecondFunction('sinh')">sinh</button>
+            <button class="scientific" onclick="calculateSecondFunction('cosh')">cosh</button>
+            <button class="scientific" onclick="calculateSecondFunction('tanh')">tanh</button>
+            <button class="scientific" onclick="calculateLog()">log</button>
+            <button class="scientific" onclick="calculateLn()">ln</button>
+            
+            <!-- الصف الرابع: الذاكرة والتحكم -->
+            <button class="scientific" onclick="memoryClear()">MC</button>
+            <button class="scientific" onclick="memoryRecall()">MR</button>
+            <button class="scientific" onclick="memoryAdd()">M+</button>
+            <button class="scientific" onclick="memorySubtract()">M-</button>
+            <button class="clear" onclick="clearDisplay()">C</button>
+            
+            <!-- الصف الخامس: الأرقام والعمليات الأساسية -->
+            <button class="reset" onclick="resetCalculator()">AC</button>
+            <button onclick="appendValue('(')">(</button>
+            <button onclick="appendValue(')')">)</button>
+            <button class="operator" onclick="appendValue('/')">÷</button>
+            <button class="operator" onclick="appendValue('*')">×</button>
+            
+            <!-- الصف السادس: الأرقام -->
             <button onclick="appendValue('7')">7</button>
             <button onclick="appendValue('8')">8</button>
             <button onclick="appendValue('9')">9</button>
-            <button class="operator" onclick="appendValue('/')">÷</button>
-
+            <button class="operator" onclick="appendValue('-')">−</button>
+            <button class="scientific" onclick="appendValue('Math.PI')">π</button>
+            
+            <!-- الصف السابع: الأرقام -->
             <button onclick="appendValue('4')">4</button>
             <button onclick="appendValue('5')">5</button>
             <button onclick="appendValue('6')">6</button>
-            <button class="operator" onclick="appendValue('*')">×</button>
-
+            <button class="operator" onclick="appendValue('+')">+</button>
+            <button class="scientific" onclick="appendValue('Math.E')">e</button>
+            
+            <!-- الصف الثامن: الأرقام -->
             <button onclick="appendValue('1')">1</button>
             <button onclick="appendValue('2')">2</button>
             <button onclick="appendValue('3')">3</button>
-            <button class="operator" onclick="appendValue('-')">−</button>
-
+            <button class="scientific" onclick="factorial()">x!</button>
+            <button class="scientific" onclick="calculateExp()">e^x</button>
+            
+            <!-- الصف التاسع: الأرقام النهائية -->
             <button onclick="appendValue('0')">0</button>
             <button onclick="appendValue('.')">.</button>
-            <button class="equals" onclick="calculate()">=</button>
-            <button class="operator" onclick="appendValue('+')">+</button>
-
-            <!-- الأزرار العلمية -->
-            <button class="scientific" onclick="calculateSqrt()">√</button>
-            <button class="scientific" onclick="calculateCubeRoot()">³√</button>
             <button class="scientific" onclick="toggleSign()">±</button>
-            <button class="scientific" onclick="appendValue(Math.PI)">π</button>
-            <button class="scientific" onclick="calculateLog()">log</button>
-            <button class="scientific" onclick="calculateLn()">ln</button>
-            <button class="scientific" onclick="calculateSin()">sin</button>
-            <button class="scientific" onclick="calculateCos()">cos</button>
-            <button class="scientific" onclick="calculateTan()">tan</button>
-
-            <!-- زر المسح -->
-            <button class="clear" onclick="clearDisplay()">C</button>
+            <button class="scientific" onclick="appendValue('10^')">10^x</button>
+            <button class="equals" onclick="calculate()">=</button>
         </div>
+        
         <button class="home-btn" onclick="goHome()">العودة إلى الصفحة الرئيسية</button>
     </div>
+
     <script>
+        // المتغيرات العامة
+        let memory = 0;
+        let currentTheme = 'dark';
+        const history = [];
+        let isSecondFunction = false;
+        
+        // تهيئة الآلة الحاسبة عند التحميل
+        document.addEventListener('DOMContentLoaded', function() {
+            // دعم لوحة المفاتيح
+            document.addEventListener('keydown', handleKeyPress);
+            
+            // تحميل السجل والوضع من localStorage
+            loadHistory();
+            loadTheme();
+        });
+
         // إضافة القيم إلى شاشة العرض
         function appendValue(value) {
             const display = document.getElementById("display");
+            display.classList.remove("error");
             display.value += value;
         }
 
         // مسح شاشة العرض
         function clearDisplay() {
             const display = document.getElementById("display");
+            display.classList.remove("error");
             display.value = "";
         }
 
-        // حساب الجذر التربيعي
-        function calculateSqrt() {
-            const display = document.getElementById("display");
-            try {
-                display.value = Math.sqrt(eval(display.value));
-            } catch {
-                display.value = "خطأ";
-            }
+        // إعادة تعيين كاملة
+        function resetCalculator() {
+            clearDisplay();
+            memory = 0;
+            history.length = 0;
+            updateHistoryDisplay();
+            localStorage.removeItem('calculatorHistory');
         }
 
-        // حساب الجذر التكعيبي
-        function calculateCubeRoot() {
-            const display = document.getElementById("display");
-            try {
-                display.value = Math.cbrt(eval(display.value));
-            } catch {
-                display.value = "خطأ";
-            }
-        }
-
-        // التبديل بين الموجب والسالب
-        function toggleSign() {
-            const display = document.getElementById("display");
-            try {
-                display.value = eval(display.value) * -1;
-            } catch {
-                display.value = "خطأ";
-            }
-        }
-
-        // حساب اللوغاريتم العشري
-        function calculateLog() {
-            const display = document.getElementById("display");
-            try {
-                const value = eval(display.value);
-                display.value = value <= 0 ? "غير صالح" : Math.log10(value);
-            } catch {
-                display.value = "خطأ";
-            }
-        }
-
-        // حساب اللوغاريتم الطبيعي
-        function calculateLn() {
-            const display = document.getElementById("display");
-            try {
-                const value = eval(display.value);
-                display.value = value <= 0 ? "غير صالح" : Math.log(value);
-            } catch {
-                display.value = "خطأ";
-            }
-        }
-
-        // حساب الجيب
-        function calculateSin() {
-            const display = document.getElementById("display");
-            try {
-                display.value = Math.sin(eval(display.value) * Math.PI / 180);
-            } catch {
-                display.value = "خطأ";
-            }
-        }
-
-        // حساب جيب التمام
-        function calculateCos() {
-            const display = document.getElementById("display");
-            try {
-                display.value = Math.cos(eval(display.value) * Math.PI / 180);
-            } catch {
-                display.value = "خطأ";
-            }
-        }
-
-        // حساب الظل
-        function calculateTan() {
-            const display = document.getElementById("display");
-            try {
-                const radians = eval(display.value) * Math.PI / 180;
-                display.value = Math.abs(Math.cos(radians)) < 1e-10 ? "غير معرف" : Math.tan(radians);
-            } catch {
-                display.value = "خطأ";
-            }
-        }
-
-        // تنفيذ العملية الحسابية
+        // حساب النتيجة
         function calculate() {
             const display = document.getElementById("display");
             try {
-                display.value = eval(display.value);
+                let expression = display.value
+                    .replace(/×/g, '*')
+                    .replace(/÷/g, '/')
+                    .replace(/\^/g, '**')
+                    .replace(/√(\d+)/g, 'Math.sqrt($1)')
+                    .replace(/³√(\d+)/g, 'Math.cbrt($1)')
+                    .replace(/log/g, 'Math.log10')
+                    .replace(/ln/g, 'Math.log')
+                    .replace(/sin/g, isSecondFunction ? 'Math.asin' : 'Math.sin')
+                    .replace(/cos/g, isSecondFunction ? 'Math.acos' : 'Math.cos')
+                    .replace(/tan/g, isSecondFunction ? 'Math.atan' : 'Math.tan')
+                    .replace(/sinh/g, 'Math.sinh')
+                    .replace(/cosh/g, 'Math.cosh')
+                    .replace(/tanh/g, 'Math.tanh')
+                    .replace(/(\d+)!/g, 'factorial($1)')
+                    .replace(/10\^(\d+)/g, '10**$1')
+                    .replace(/e\^(\d+)/g, 'Math.exp($1)')
+                    .replace(/π/g, 'Math.PI')
+                    .replace(/e/g, 'Math.E');
+
+                const result = evaluateExpression(expression);
+                
+                // إضافة إلى السجل
+                addToHistory(display.value + " = " + result);
+                
+                display.value = formatResult(result);
+            } catch (error) {
+                display.value = "تعبيرة غير صالحة";
+                display.classList.add("error");
+            }
+            
+            isSecondFunction = false;
+        }
+
+        // تنسيق النتيجة
+        function formatResult(result) {
+            if (typeof result !== 'number') return result;
+            
+            // تقريب الأعداد الكبيرة جدًا أو الصغيرة جدًا
+            if (Math.abs(result) > 1e12 || (Math.abs(result) < 1e-6 && result !== 0)) {
+                return result.toExponential(8).replace(/(\.\d*?[1-9])0+e/, '$1e');
+            }
+            
+            // تقليل الأرقام العشرية غير الضرورية
+            const str = result.toString();
+            if (str.includes('.')) {
+                const trimmed = str.replace(/\.?0+$/, '');
+                return trimmed === '' ? '0' : trimmed;
+            }
+            
+            return result;
+        }
+
+        // دالة آمنة للحساب
+        function evaluateExpression(expr) {
+            // التحقق من وجود محاولات حقن
+            if (/alert|window|document|function|eval|import|require|process|\.\.|this|self|top|parent|frames|frame/i.test(expr)) {
+                throw new Error("تعبيرة غير آمنة");
+            }
+            
+            // استبدال الدوال المثلثية بالراديان
+            expr = expr.replace(/(Math\.(sin|cos|tan|asin|acos|atan|sinh|cosh|tanh))\(([^)]*)\)/g, 
+                (match, func, trigFn, angle) => {
+                    if (trigFn.match(/^(sinh|cosh|tanh|asin|acos|atan)$/)) {
+                        return `${func}(${angle})`;
+                    }
+                    return `${func}(${angle} * Math.PI / 180)`;
+                });
+            
+            // حساب النتيجة
+            const result = new Function('return ' + expr)();
+            
+            // التعامل مع القيم غير العددية
+            if (isNaN(result) || !isFinite(result)) {
+                throw new Error("نتيجة غير عددية");
+            }
+            
+            return result;
+        }
+
+        // الدوال العلمية
+        function calculateSecondFunction(func) {
+            isSecondFunction = true;
+            appendValue(func + '(');
+        }
+
+        function calculateSqrt() {
+            const display = document.getElementById("display");
+            try {
+                const value = evaluateExpression(display.value);
+                display.value = value < 0 ? "غير صالح" : "√(" + value + ")";
             } catch {
                 display.value = "خطأ";
+                display.classList.add("error");
+            }
+        }
+
+        function calculateCubeRoot() {
+            const display = document.getElementById("display");
+            try {
+                const value = evaluateExpression(display.value);
+                display.value = "³√(" + value + ")";
+            } catch {
+                display.value = "خطأ";
+                display.classList.add("error");
+            }
+        }
+
+        function toggleSign() {
+            const display = document.getElementById("display");
+            try {
+                const value = evaluateExpression(display.value);
+                display.value = value * -1;
+            } catch {
+                display.value = "خطأ";
+                display.classList.add("error");
+            }
+        }
+
+        function calculateLog() {
+            appendValue('log(');
+        }
+
+        function calculateLn() {
+            appendValue('ln(');
+        }
+
+        function calculateExp() {
+            appendValue('e^(');
+        }
+
+        function calculatePower() {
+            const display = document.getElementById("display");
+            try {
+                const base = evaluateExpression(display.value);
+                display.value = base + "^(";
+            } catch {
+                display.value = "خطأ";
+                display.classList.add("error");
+            }
+        }
+
+        function calculateSquare() {
+            const display = document.getElementById("display");
+            try {
+                const value = evaluateExpression(display.value);
+                display.value = "(" + value + ")^2";
+            } catch {
+                display.value = "خطأ";
+                display.classList.add("error");
+            }
+        }
+
+        function factorial() {
+            const display = document.getElementById("display");
+            try {
+                let num = evaluateExpression(display.value);
+                if (num < 0) {
+                    display.value = "غير صالح";
+                    return;
+                }
+                if (num % 1 !== 0) {
+                    display.value = "يجب أن يكون عددًا صحيحًا";
+                    return;
+                }
+                display.value = num + "!";
+            } catch {
+                display.value = "خطأ";
+                display.classList.add("error");
+            }
+        }
+
+        // ذاكرة الآلة الحاسبة
+        function memoryClear() {
+            memory = 0;
+        }
+
+        function memoryRecall() {
+            const display = document.getElementById("display");
+            display.value = memory;
+        }
+
+        function memoryAdd() {
+            try {
+                const value = evaluateExpression(document.getElementById("display").value);
+                memory += value;
+            } catch {
+                document.getElementById("display").value = "خطأ";
+                document.getElementById("display").classList.add("error");
+            }
+        }
+
+        function memorySubtract() {
+            try {
+                const value = evaluateExpression(document.getElementById("display").value);
+                memory -= value;
+            } catch {
+                document.getElementById("display").value = "خطأ";
+                document.getElementById("display").classList.add("error");
+            }
+        }
+
+        // السجل (History)
+        function addToHistory(entry) {
+            history.unshift(entry);
+            if (history.length > 10) history.pop();
+            updateHistoryDisplay();
+            saveHistory();
+        }
+
+        function updateHistoryDisplay() {
+            const historyElement = document.getElementById("history");
+            historyElement.innerHTML = history.map(item => 
+                `<div class="history-item" onclick="useHistoryItem('${item.split(' = ')[0]}')">${item}</div>`
+            ).join('');
+        }
+
+        function useHistoryItem(expression) {
+            document.getElementById("display").value = expression;
+        }
+
+        function saveHistory() {
+            localStorage.setItem('calculatorHistory', JSON.stringify(history));
+        }
+
+        function loadHistory() {
+            const savedHistory = localStorage.getItem('calculatorHistory');
+            if (savedHistory) {
+                history.push(...JSON.parse(savedHistory));
+                updateHistoryDisplay();
+            }
+        }
+
+        // الوضع الليلي/النهاري
+        function toggleTheme() {
+            const body = document.body;
+            if (currentTheme === 'dark') {
+                body.classList.add('light-mode');
+                currentTheme = 'light';
+            } else {
+                body.classList.remove('light-mode');
+                currentTheme = 'dark';
+            }
+            localStorage.setItem('calculatorTheme', currentTheme);
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('calculatorTheme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                currentTheme = 'light';
+            }
+        }
+
+        // دعم لوحة المفاتيح
+        function handleKeyPress(e) {
+            const key = e.key;
+            const display = document.getElementById("display");
+            
+            if (/[0-9]/.test(key)) {
+                appendValue(key);
+            } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+                appendValue(key);
+            } else if (key === '.') {
+                appendValue('.');
+            } else if (key === 'Enter') {
+                calculate();
+            } else if (key === 'Escape') {
+                clearDisplay();
+            } else if (key === 'Backspace') {
+                display.value = display.value.slice(0, -1);
+            } else if (key === '(' || key === ')') {
+                appendValue(key);
+            } else if (key === '^') {
+                appendValue('^');
+            } else if (key === '!') {
+                factorial();
             }
         }
 
