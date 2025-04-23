@@ -279,6 +279,12 @@
             color: var(--text-color);
             padding: 20px;
         }
+        .main-home-button {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+        }
         @media (max-width: 768px) {
             .countdown div {
                 padding: 10px 15px;
@@ -298,10 +304,17 @@
             .projects-list {
                 grid-template-columns: 1fr;
             }
+            .main-home-button {
+                position: static;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
         }
     </style>
 </head>
 <body>
+    <a href="https://1hiba7.github.io/Hiba-Kittaneh/" class="home-button main-home-button">العودة إلى الصفحة الرئيسية</a>
+    
     <div class="controls">
         <button class="toggle-button" id="toggleDateBtn">إظهار تاريخ العد التنازلي</button>
         <button class="theme-toggle" id="themeToggle">🌓</button>
@@ -311,7 +324,7 @@
         <h2>✨ إنشاء عد تنازلي جديد ✨</h2>
         <div class="form-group">
             <label for="eventName">اسم المناسبة (اختياري)</label>
-            <input type="text" id="eventName" placeholder="مثال: يوم ميلادي، حفل زفاف...">
+            <input type="text" id="eventName" placeholder="مثال: عيد ميلادي، حفل زفاف...">
         </div>
         <div class="form-group">
             <label for="targetDate">تاريخ ووقت العد التنازلي</label>
@@ -350,7 +363,6 @@
             <div id="shareLink"></div>
             <button id="copyBtn" class="copy-btn">نسخ الرابط</button>
         </div>
-        <a class="home-button" href="https://1hiba7.github.io/Hiba-Kittaneh/">العودة إلى الصفحة الرئيسية</a>
         <button id="newCountdownBtn" class="home-button" style="margin-top: 10px;">إنشاء عد تنازلي جديد</button>
     </div>
 
