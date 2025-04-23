@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>العد التنازلي لتاريخ محدد</title>
+    <link rel="icon" href="7.png" type="image/png">
+    <style>
+        :root {
+            --bg-color: #f9f9f9;
+            --text-color: #333;
+            --primary-color: #5a2cd3;
+            --secondary-color: #7a56eb;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --countdown-bg: #7a56eb;
+            --button-bg: #5a2cd3;
+            --input-bg: #ffffff;
+            --input-border: #ddd;
+        }
+        
+        .dark-mode {
+            --bg-color: #1a1a1a;
+            --text-color: #f0f0f0;
+            --primary-color: #8a63f2;
+            --secondary-color: #6a3cf2;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --countdown-bg: #6a3cf2;
+            --button-bg: #8a63f2;
+            --input-bg: #2a2a2a;
+            --input-border: #444;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            flex-direction: column;
+            position: relative;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .countdown-container {
+            text-align: center;
+            color: var(--primary-color);
+            width: 100%;
+            max-width: 800px;
+        }
+        .countdown-container h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .countdown div {
+            background-color: var(--countdown-bg);
+            color: white;
+            border-radius: 10px;
+            padding: 15px 20px;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: var(--box-shadow);
+            transition: transform 0.3s ease;
+            min-width: 80px;
+        }
+        .countdown div:hover {
+            transform: scale(1.2);
+        }
+        .countdown span {
+            display: block;
+            font-size: 14px;
+            margin-top: 5px;
+            font-weight: normal;
+        }
+        .home-button {
+            margin-top: 20px;
+            display: inline-block;
+            text-decoration: none;
+            color: white;
+            background-color: var(--button-bg);
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .home-button:hover {
+            background-color: var(--secondary-color);
+        }
+        .message {
+            font-size: 20px;
+            color: var(--secondary-color);
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .date-display {
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: var(--text-color);
+            display: none;
+        }
+        .toggle-button {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            background-color: var(--button-bg);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .toggle-button:hover {
+            background-color: var(--secondary-color);
+        }
+        .theme-toggle {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background-color: var(--button-bg);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .theme-toggle:hover {
+            background-color: var(--secondary-color);
+        }
+        .setup-container {
+            background-color: var(--input-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 500px;
+        }
+        .setup-container h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: right;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 16px;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            flex: 1;
+            text-align: center;
+        }
+        .btn-primary {
+            background-color: var(--button-bg);
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        .share-link {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            word-break: break-all;
+            display: none;
+        }
+        .copy-btn {
+            margin-top: 10px;
+            background-color: var(--button-bg);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .copy-btn:hover {
+            background-color: var(--secondary-color);
+        }
+        .hidden {
+            display: none;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        .projects-container {
+            width: 100%;
+            max-width: 800px;
+            margin-top: 30px;
+            background-color: var(--input-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--box-shadow);
+        }
+        .projects-container h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+            text-align: center;
+        }
+        .projects-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .project-card {
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: var(--box-shadow);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+        }
+        .project-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+        .project-date {
+            font-size: 14px;
+            color: var(--text-color);
+        }
+        .no-projects {
+            text-align: center;
+            color: var(--text-color);
+            padding: 20px;
+        }
+        @media (max-width: 768px) {
+            .countdown div {
+                padding: 10px 15px;
+                font-size: 18px;
+                min-width: 70px;
+            }
+            .toggle-button, .theme-toggle {
+                position: static;
+                margin-bottom: 15px;
+            }
+            .controls {
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
+                margin-bottom: 20px;
+            }
+            .projects-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <button class="toggle-button" id="toggleDateBtn">إظهار تاريخ العد التنازلي</button>
+        <button class="theme-toggle" id="themeToggle">🌓</button>
+    </div>
+    
+    <div id="setupContainer" class="setup-container">
+        <h2>✨ إنشاء عد تنازلي جديد ✨</h2>
+        <div class="form-group">
+            <label for="eventName">اسم المناسبة (اختياري)</label>
+            <input type="text" id="eventName" placeholder="مثال: عيد ميلادي، حفل زفاف...">
+        </div>
+        <div class="form-group">
+            <label for="targetDate">تاريخ ووقت العد التنازلي</label>
+            <input type="datetime-local" id="targetDate" required>
+            <div id="dateError" class="error-message">الرجاء إدخال تاريخ صحيح</div>
+        </div>
+        <div class="form-actions">
+            <button id="resetBtn" class="btn btn-secondary">إعادة تعيين</button>
+            <button id="startBtn" class="btn btn-primary">بدء العد التنازلي</button>
+        </div>
+    </div>
+    
+    <div class="countdown-container hidden" id="countdownDisplay">
+        <h1 id="countdownTitle">✨ العد التنازلي ✨</h1>
+        <div id="targetDateDisplay" class="date-display"></div>
+        <div class="countdown">
+            <div>
+                <div id="days">00</div>
+                <span>أيام</span>
+            </div>
+            <div>
+                <div id="hours">00</div>
+                <span>ساعات</span>
+            </div>
+            <div>
+                <div id="minutes">00</div>
+                <span>دقائق</span>
+            </div>
+            <div>
+                <div id="seconds">00</div>
+                <span>ثواني</span>
+            </div>
+        </div>
+        <div id="message" class="message"></div>
+        <div id="shareContainer" class="share-link">
+            <div id="shareLink"></div>
+            <button id="copyBtn" class="copy-btn">نسخ الرابط</button>
+        </div>
+        <a class="home-button" href="https://1hiba7.github.io/Hiba-Kittaneh/">العودة إلى الصفحة الرئيسية</a>
+        <button id="newCountdownBtn" class="home-button" style="margin-top: 10px;">إنشاء عد تنازلي جديد</button>
+    </div>
+
+    <div id="projectsContainer" class="projects-container hidden">
+        <h2>✨ مشاريع العد التنازلي الخاصة بك ✨</h2>
+        <div id="projectsList" class="projects-list">
+            <div class="no-projects">لا توجد مشاريع مسجلة بعد</div>
+        </div>
+    </div>
+
+    <script>
+        // عناصر التحكم
+        const toggleDateBtn = document.getElementById('toggleDateBtn');
+        const dateDisplay = document.getElementById('targetDateDisplay');
+        const themeToggle = document.getElementById('themeToggle');
+        const setupContainer = document.getElementById('setupContainer');
+        const countdownDisplay = document.getElementById('countdownDisplay');
+        const eventNameInput = document.getElementById('eventName');
+        const targetDateInput = document.getElementById('targetDate');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const countdownTitle = document.getElementById('countdownTitle');
+        const shareContainer = document.getElementById('shareContainer');
+        const shareLink = document.getElementById('shareLink');
+        const copyBtn = document.getElementById('copyBtn');
+        const newCountdownBtn = document.getElementById('newCountdownBtn');
+        const dateError = document.getElementById('dateError');
+        const projectsContainer = document.getElementById('projectsContainer');
+        const projectsList = document.getElementById('projectsList');
+
+        // تخزين المشاريع
+        let projects = JSON.parse(localStorage.getItem('countdownProjects')) || [];
+        
+        // تعيين التاريخ الافتراضي (التاريخ والوقت الحاليين)
+        function setDefaultDateTime() {
+            const now = new Date();
+            // إضافة دقيقة واحدة لتجنب اختيار وقت في الماضي
+            now.setMinutes(now.getMinutes() + 1);
+            
+            // تحويل التاريخ إلى تنسيق مناسب لـ datetime-local
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            targetDateInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+        
+        // استدعاء الدالة لتعيين التاريخ الافتراضي عند التحميل
+        setDefaultDateTime();
+        
+        // التحقق من صحة التاريخ المدخل
+        function validateDateTime() {
+            const selectedDate = new Date(targetDateInput.value);
+            const now = new Date();
+            
+            if (!targetDateInput.value || selectedDate <= now) {
+                dateError.textContent = 'الرجاء اختيار تاريخ ووقت في المستقبل';
+                dateError.style.display = 'block';
+                return false;
+            }
+            
+            // التحقق من عدد المنازل في السنة (4 منازل)
+            const year = targetDateInput.value.split('-')[0];
+            if (year.length !== 4) {
+                dateError.textContent = 'يجب أن تتكون السنة من 4 أرقام';
+                dateError.style.display = 'block';
+                return false;
+            }
+            
+            // التحقق من عدد المنازل في الشهر (2 منزل)
+            const month = targetDateInput.value.split('-')[1];
+            if (month && month.length !== 2) {
+                dateError.textContent = 'يجب أن يتكون الشهر من رقمين';
+                dateError.style.display = 'block';
+                return false;
+            }
+            
+            // التحقق من عدد المنازل في اليوم (2 منزل)
+            const dayPart = targetDateInput.value.split('-')[2];
+            const day = dayPart ? dayPart.split('T')[0] : null;
+            if (day && day.length !== 2) {
+                dateError.textContent = 'يجب أن يتكون اليوم من رقمين';
+                dateError.style.display = 'block';
+                return false;
+            }
+            
+            // التحقق من عدد المنازل في الساعات (2 منزل)
+            const timePart = targetDateInput.value.split('T')[1];
+            const hours = timePart ? timePart.split(':')[0] : null;
+            if (hours && hours.length !== 2) {
+                dateError.textContent = 'يجب أن تتكون الساعات من رقمين';
+                dateError.style.display = 'block';
+                return false;
+            }
+            
+            dateError.style.display = 'none';
+            return true;
+        }
+        
+        // عرض المشاريع المحفوظة
+        function renderProjects() {
+            if (projects.length === 0) {
+                projectsList.innerHTML = '<div class="no-projects">لا توجد مشاريع مسجلة بعد</div>';
+                return;
+            }
+            
+            projectsList.innerHTML = '';
+            projects.forEach((project, index) => {
+                const projectCard = document.createElement('div');
+                projectCard.className = 'project-card';
+                projectCard.innerHTML = `
+                    <div class="project-name">${project.name || 'بدون اسم'}</div>
+                    <div class="project-date">${new Date(project.date).toLocaleString('ar-EG')}</div>
+                `;
+                projectCard.addEventListener('click', () => {
+                    loadProject(project);
+                });
+                projectsList.appendChild(projectCard);
+            });
+        }
+        
+        // تحميل مشروع محدد
+        function loadProject(project) {
+            // تحويل التاريخ إلى تنسيق datetime-local
+            const date = new Date(project.date);
+            const formattedDate = date.toISOString().slice(0, 16);
+            
+            targetDateInput.value = formattedDate;
+            eventNameInput.value = project.name || '';
+            
+            setupContainer.classList.remove('hidden');
+            countdownDisplay.classList.add('hidden');
+            projectsContainer.classList.add('hidden');
+        }
+        
+        // حفظ المشروع
+        function saveProject(name, date) {
+            // تجنب التكرار
+            const exists = projects.some(project => 
+                project.date === date && project.name === name
+            );
+            
+            if (!exists) {
+                projects.unshift({
+                    name: name,
+                    date: date
+                });
+                
+                // حفظ فقط آخر 10 مشاريع
+                if (projects.length > 10) {
+                    projects = projects.slice(0, 10);
+                }
+                
+                localStorage.setItem('countdownProjects', JSON.stringify(projects));
+                renderProjects();
+            }
+        }
+        
+        // متغيرات العد التنازلي
+        let targetDate;
+        let interval;
+        
+        // حدث النقر على زر بدء العد التنازلي
+        startBtn.addEventListener('click', function() {
+            if (!validateDateTime()) {
+                return; // لا تتابع إذا كان التاريخ غير صحيح
+            }
+            
+            const eventName = eventNameInput.value.trim();
+            const selectedDate = new Date(targetDateInput.value);
+            
+            targetDate = selectedDate;
+            
+            // تحديث عنوان العد التنازلي
+            if (eventName) {
+                countdownTitle.textContent = `✨ العد التنازلي لـ ${eventName} ✨`;
+            } else {
+                countdownTitle.textContent = '✨ العد التنازلي ✨';
+            }
+            
+            // إخفاء واجهة الإعداد وإظهار العد التنازلي
+            setupContainer.classList.add('hidden');
+            countdownDisplay.classList.remove('hidden');
+            projectsContainer.classList.remove('hidden');
+            
+            // تحديث عرض التاريخ
+            dateDisplay.textContent = targetDate.toLocaleString('ar-EG');
+            
+            // إنشاء رابط المشاركة
+            const params = new URLSearchParams();
+            params.set('date', targetDate.toISOString());
+            if (eventName) params.set('name', encodeURIComponent(eventName));
+            
+            // إنشاء رابط مطلق (Absolute URL) بدلاً من النسبي
+            const currentUrl = new URL(window.location.href);
+            currentUrl.search = params.toString();
+            const shareUrl = currentUrl.href;
+            
+            shareLink.textContent = shareUrl;
+            shareContainer.style.display = 'block';
+            
+            // حفظ المشروع
+            saveProject(eventName, targetDateInput.value);
+            
+            // بدء العد التنازلي
+            if (interval) clearInterval(interval);
+            interval = setInterval(updateCountdown, 1000);
+            updateCountdown();
+        });
+        
+        // حدث تغيير التاريخ
+        targetDateInput.addEventListener('change', function() {
+            validateDateTime();
+        });
+        
+        // حدث النقر على زر إعادة تعيين
+        resetBtn.addEventListener('click', function() {
+            eventNameInput.value = '';
+            setDefaultDateTime();
+            dateError.style.display = 'none';
+        });
+        
+        // حدث النقر على زر نسخ الرابط
+        copyBtn.addEventListener('click', function() {
+            navigator.clipboard.writeText(shareLink.textContent).then(() => {
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = 'تم النسخ!';
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                // طريقة بديلة للنسخ إذا فشلت الطريقة الحديثة
+                const textarea = document.createElement('textarea');
+                textarea.value = shareLink.textContent;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                
+                copyBtn.textContent = 'تم النسخ!';
+                setTimeout(() => {
+                    copyBtn.textContent = 'نسخ الرابط';
+                }, 2000);
+            });
+        });
+        
+        // حدث النقر على زر إنشاء عد تنازلي جديد
+        newCountdownBtn.addEventListener('click', function() {
+            countdownDisplay.classList.add('hidden');
+            setupContainer.classList.remove('hidden');
+            shareContainer.style.display = 'none';
+            if (interval) clearInterval(interval);
+            setDefaultDateTime();
+        });
+        
+        // حدث النقر على زر عرض/إخفاء التاريخ
+        toggleDateBtn.addEventListener('click', function() {
+            if (dateDisplay.style.display === 'block') {
+                dateDisplay.style.display = 'none';
+                toggleDateBtn.textContent = 'إظهار تاريخ العد التنازلي';
+            } else {
+                dateDisplay.style.display = 'block';
+                toggleDateBtn.textContent = 'إخفاء تاريخ العد التنازلي';
+            }
+        });
+
+        // حدث النقر على زر تبديل الوضع
+        themeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            // حفظ التفضيل في localStorage
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode);
+        });
+
+        // التحقق من تفضيلات الوضع الليلي عند التحميل
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+        }
+        
+        // التحقق من وجود معلمات URL عند التحميل
+        function checkUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            const dateParam = params.get('date');
+            const nameParam = params.get('name');
+            
+            if (dateParam) {
+                const urlDate = new Date(dateParam);
+                
+                if (urlDate && !isNaN(urlDate.getTime()) && urlDate > new Date()) {
+                    targetDate = urlDate;
+                    
+                    // تحديث عنوان العد التنازلي
+                    if (nameParam) {
+                        countdownTitle.textContent = `✨ العد التنازلي لـ ${decodeURIComponent(nameParam)} ✨`;
+                    } else {
+                        countdownTitle.textContent = '✨ العد التنازلي ✨';
+                    }
+                    
+                    // إخفاء واجهة الإعداد وإظهار العد التنازلي
+                    setupContainer.classList.add('hidden');
+                    countdownDisplay.classList.remove('hidden');
+                    projectsContainer.classList.remove('hidden');
+                    
+                    // تحديث عرض التاريخ
+                    dateDisplay.textContent = targetDate.toLocaleString('ar-EG');
+                    
+                    // إنشاء رابط المشاركة
+                    const shareUrl = window.location.href;
+                    shareLink.textContent = shareUrl;
+                    shareContainer.style.display = 'block';
+                    
+                    // حفظ المشروع
+                    saveProject(nameParam || '', dateParam);
+                    
+                    // بدء العد التنازلي
+                    if (interval) clearInterval(interval);
+                    interval = setInterval(updateCountdown, 1000);
+                    updateCountdown();
+                }
+            }
+        }
+        
+        // استدعاء الدالة للتحقق من معلمات URL عند التحميل
+        checkUrlParams();
+        
+        // عرض المشاريع عند التحميل
+        renderProjects();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const timeLeft = targetDate.getTime() - now;
+
+            // إذا انتهى الوقت
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                document.getElementById('days').textContent = "00";
+                document.getElementById('hours').textContent = "00";
+                document.getElementById('minutes').textContent = "00";
+                document.getElementById('seconds').textContent = "00";
+                document.getElementById('message').textContent = "لقد وصلنا للتاريخ المحدد! 🎉";
+                return;
+            }
+
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+    </script>
+</body>
+</html>
