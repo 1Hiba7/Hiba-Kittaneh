@@ -629,22 +629,37 @@
             }
         }
 
-        // دعم لوحة المفاتيح
+        // دعم لوحة المفاتيح مع فلترة المدخلات
         function handleKeyPress(e) {
             const key = e.key;
             const display = document.getElementById("display");
             
+            // قائمة بالمفاتيح المسموح بها
+            const allowedKeys = [
+                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                '+', '-', '*', '/', '(', ')', '.', '^', '!',
+                'Enter', '=', 'Escape', 'Backspace', 'Delete'
+            ];
+            
+            // منع أي مفاتيح غير مسموح بها
+            if (!allowedKeys.includes(key)) {
+                e.preventDefault();
+                return;
+            }
+            
+            // معالجة المفاتيح المسموح بها
             if (/[0-9]/.test(key)) {
                 appendValue(key);
             } else if (key === '+' || key === '-' || key === '*' || key === '/') {
                 appendValue(key);
             } else if (key === '.') {
                 appendValue('.');
-            } else if (key === 'Enter') {
+            } else if (key === 'Enter' || key === '=') {
                 calculate();
+                e.preventDefault();
             } else if (key === 'Escape') {
                 clearDisplay();
-            } else if (key === 'Backspace') {
+            } else if (key === 'Backspace' || key === 'Delete') {
                 display.value = display.value.slice(0, -1);
             } else if (key === '(' || key === ')') {
                 appendValue(key);
