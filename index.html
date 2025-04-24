@@ -47,13 +47,11 @@
             flex-direction: column;
         }
 
-        /* إخفاء العناصر قبل التحميل */
         .preload * {
             animation: none !important;
             transition: none !important;
         }
 
-        /* زر التبديل */
         .theme-toggle {
             position: fixed;
             bottom: 30px;
@@ -81,7 +79,6 @@
             transform: rotate(30deg);
         }
 
-        /* تذييل الصفحة */
         .footer {
             margin-top: auto;
             padding: 30px 0;
@@ -138,7 +135,6 @@
             opacity: 0.8;
         }
 
-        /* نص متحرك */
         .marquee {
             background: var(--marquee-bg);
             padding: 12px 0;
@@ -182,7 +178,17 @@
             animation-delay: 0.6s;
         }
 
-        /* قسم البطاقات المميزة */
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .featured-section {
             background: var(--featured-bg);
             padding: 30px 20px;
@@ -204,14 +210,26 @@
             animation-delay: 1.2s;
         }
 
-        /* قسم البطاقات العادية */
+        .regular-section {
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+            animation-delay: 1.8s;
+        }
+
         .regular-section h2 {
             text-align: center;
             margin-bottom: 20px;
-            opacity: 0;
             transform: scale(0.8);
             animation: bounceIn 0.8s ease-out forwards;
-            animation-delay: 1.5s;
+            animation-delay: 2.1s;
+        }
+
+        @keyframes bounceIn {
+            50% { transform: scale(1.1); }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         .gallery {
@@ -228,39 +246,15 @@
             border-radius: 15px;
             overflow: hidden;
             opacity: 0;
-            transform: translateY(30px) rotateY(-15deg);
-            filter: blur(3px);
-            animation: cardEntrance 0.8s ease-out forwards;
+            transform: translateY(100px);
+            filter: blur(8px);
+            transition: 
+                opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+                filter 0.8s cubic-bezier(0.22, 1, 0.36, 1);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             position: relative;
-        }
-
-        /* أنيميشن ظهور البطاقات */
-        @keyframes cardEntrance {
-            to {
-                opacity: 1;
-                transform: translateY(0) rotateY(0);
-                filter: blur(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
-
-        @keyframes fadeInDown {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes bounceIn {
-            50% { transform: scale(1.1); }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+            will-change: transform, opacity, filter;
         }
 
         .card.featured {
@@ -304,7 +298,6 @@
         .card-content {
             padding: 15px;
             text-align: center;
-            transform: translateZ(0);
         }
 
         .btn {
@@ -316,7 +309,6 @@
             border-radius: 25px;
             transition: all 0.3s ease;
             margin-top: 10px;
-            transform: translateZ(0);
         }
 
         .btn:hover {
@@ -324,7 +316,6 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
-        /* التجاوبية */
         @media (max-width: 768px) {
             .gallery {
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -348,27 +339,23 @@
     </style>
 </head>
 <body class="preload">
-    <!-- زر التبديل -->
     <div class="theme-toggle" id="themeToggle">
         <i class="fas fa-moon"></i>
     </div>
 
-    <!-- نص متحرك -->
     <div class="marquee">
         <p>أنا الطالبة هبة كتانة من الصف الثامن في مدرسة إناث قلقيلية الشرعية الثانوية</p>
     </div>
     
-    <!-- العنوان الرئيسي -->
     <div class="header">
         <h1>معرض مواقعي</h1>
         <p>تصفح مجموعة المواقع التي قمت بتطويرها بواسطة الذكاء الاصطناعي</p>
     </div>
     
-    <!-- قسم البطاقات المميزة -->
     <div class="featured-section">
         <h2><i class="fas fa-crown"></i> المواقع المميزة</h2>
-        <div class="gallery">
-            <div class="card featured" style="animation-delay: 1.8s;">
+        <div class="gallery" id="featuredGallery">
+            <div class="card featured" data-delay="0">
                 <img src="11.png" alt="انتقاء الألوان من الصورة">
                 <div class="card-content">
                     <h3>انتقاء الألوان من الصورة</h3>
@@ -376,7 +363,7 @@
                 </div>
             </div>
             
-            <div class="card featured" style="animation-delay: 2.1s;">
+            <div class="card featured" data-delay="1">
                 <img src="33.png" alt="نور الإيمان">
                 <div class="card-content">
                     <h3>نور الإيمان</h3>
@@ -384,7 +371,7 @@
                 </div>
             </div>
             
-            <div class="card featured" style="animation-delay: 2.4s;">
+            <div class="card featured" data-delay="2">
                 <img src="55.png" alt="الطقس">
                 <div class="card-content">
                     <h3>الطقس</h3>
@@ -394,11 +381,10 @@
         </div>
     </div>
 
-    <!-- قسم البطاقات العادية -->
     <div class="regular-section">
         <h2><i class="fas fa-th"></i> جميع المواقع</h2>
-        <div class="gallery">
-            <div class="card" style="animation-delay: 2.7s;">
+        <div class="gallery" id="regularGallery">
+            <div class="card" data-delay="3">
                 <img src="22.png" alt="حساب العمر وتاريخ الميلاد">
                 <div class="card-content">
                     <h3>حساب العمر وتاريخ الميلاد</h3>
@@ -406,7 +392,7 @@
                 </div>
             </div>
             
-            <div class="card" style="animation-delay: 3.0s;">
+            <div class="card" data-delay="4">
                 <img src="OO.png" alt="النسخة القديمة من الموقع">
                 <div class="card-content">
                     <h3>النسخة القديمة من الموقع</h3>
@@ -414,7 +400,7 @@
                 </div>
             </div>
             
-            <div class="card" style="animation-delay: 3.3s;">
+            <div class="card" data-delay="5">
                 <img src="44.png" alt="أول نسخة من الموقع">
                 <div class="card-content">
                     <h3>أول نسخة من الموقع</h3>
@@ -422,7 +408,7 @@
                 </div>
             </div>
 
-            <div class="card" style="animation-delay: 3.6s;">
+            <div class="card" data-delay="6">
                 <img src="66.png" alt="آلة حاسبة">
                 <div class="card-content">
                     <h3>آلة حاسبة</h3>
@@ -430,7 +416,7 @@
                 </div>
             </div>
 
-            <div class="card" style="animation-delay: 3.9s;">
+            <div class="card" data-delay="7">
                 <img src="77.png" alt="عد تنازلي لمناسبة معينة">
                 <div class="card-content">
                     <h3>عد تنازلي لمناسبة معينة</h3>
@@ -440,7 +426,6 @@
         </div>
     </div>
 
-    <!-- تذييل الصفحة -->
     <footer class="footer">
         <div class="footer-icons">
             <a href="https://www.youtube.com/@1Hiba7" target="_blank" class="footer-icon youtube-icon">
@@ -462,56 +447,54 @@
     </footer>
 
     <script>
-        // إزالة حالة preload بعد تحميل الصفحة
-        window.addEventListener('load', function() {
-            document.body.classList.remove('preload');
-            
-            // تبديل الوضع مع تأثير تدرج بطيء
+        document.addEventListener('DOMContentLoaded', function() {
+            // إزالة حالة preload
+            setTimeout(() => document.body.classList.remove('preload'), 100);
+
+            // تبديل الوضع الفاتح/الداكن
             const themeToggle = document.getElementById('themeToggle');
             const icon = themeToggle.querySelector('i');
             
-            // تحميل التفضيل المحفوظ
             const savedTheme = localStorage.getItem('theme') || 'dark';
             if (savedTheme === 'light') {
                 document.body.classList.add('light-mode');
                 icon.classList.replace('fa-moon', 'fa-sun');
             }
 
-            // حدث التبديل
             themeToggle.addEventListener('click', () => {
                 document.body.classList.toggle('light-mode');
-                
                 setTimeout(() => {
-                    if (document.body.classList.contains('light-mode')) {
-                        icon.classList.replace('fa-moon', 'fa-sun');
-                        localStorage.setItem('theme', 'light');
-                    } else {
-                        icon.classList.replace('fa-sun', 'fa-moon');
-                        localStorage.setItem('theme', 'dark');
-                    }
+                    icon.classList.toggle('fa-moon');
+                    icon.classList.toggle('fa-sun');
+                    localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
                 }, 300);
             });
 
-            // ظهور البطاقات عند التمرير مع تأثيرات متتالية
-            const cards = document.querySelectorAll(".card");
-            
-            cards.forEach((card) => {
-                // مراقبة ظهور البطاقات
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            const delay = card.style.animationDelay || '0s';
-                            setTimeout(() => {
-                                entry.target.style.opacity = "1";
-                                entry.target.style.transform = "translateY(0) rotateY(0)";
-                                entry.target.style.filter = "blur(0)";
-                            }, parseFloat(delay) * 1000);
-                        }
-                    });
-                }, { threshold: 0.1 });
+            // تأثير الظهور المتسلسل للبطاقات
+            const animateCardsSequentially = () => {
+                const cards = document.querySelectorAll('.card');
                 
-                observer.observe(card);
-            });
+                // إخفاء جميع البطاقات أولاً
+                cards.forEach(card => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(100px)';
+                    card.style.filter = 'blur(8px)';
+                });
+                
+                // تحديد تأخير كل بطاقة بناءً على سمة data-delay
+                cards.forEach(card => {
+                    const delay = parseInt(card.getAttribute('data-delay')) * 400; // 400ms بين كل بطاقة
+                    
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                        card.style.filter = 'blur(0)';
+                    }, delay + 1000); // بدء التأخير بعد 1 ثانية من تحميل الصفحة
+                });
+            };
+            
+            // بدء الأنيميشن بعد تحميل الصفحة
+            setTimeout(animateCardsSequentially, 1000);
         });
     </script>
 </body>
