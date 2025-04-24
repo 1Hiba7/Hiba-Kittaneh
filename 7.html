@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>العد التنازلي لتاريخ محدد</title>
-    <link rel="icon" href="66.png" type="image/png">
+    <link rel="icon" href="7.png" type="image/png">
     <style>
         :root {
             --bg-color: #f9f9f9;
@@ -16,6 +16,7 @@
             --button-bg: #5a2cd3;
             --input-bg: #ffffff;
             --input-border: #ddd;
+            --danger-color: #dc3545;
         }
         
         .dark-mode {
@@ -28,6 +29,7 @@
             --button-bg: #8a63f2;
             --input-bg: #2a2a2a;
             --input-border: #444;
+            --danger-color: #ff6b6b;
         }
         
         body {
@@ -164,7 +166,7 @@
             margin-bottom: 5px;
             font-weight: bold;
         }
-        .form-group input {
+        .form-group input, .form-group select {
             width: 100%;
             padding: 10px;
             border: 1px solid var(--input-border);
@@ -203,6 +205,13 @@
         .btn-secondary:hover {
             background-color: #5a6268;
         }
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
         .share-link {
             margin-top: 20px;
             padding: 15px;
@@ -229,7 +238,7 @@
             display: none;
         }
         .error-message {
-            color: #dc3545;
+            color: var(--danger-color);
             font-size: 14px;
             margin-top: 5px;
             display: none;
@@ -275,10 +284,14 @@
             font-size: 14px;
             color: var(--text-color);
         }
-        .project-share {
+        .project-actions {
             position: absolute;
             top: 10px;
             left: 10px;
+            display: flex;
+            gap: 5px;
+        }
+        .project-action-btn {
             background-color: var(--button-bg);
             color: white;
             border: none;
@@ -289,6 +302,10 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            font-size: 14px;
+        }
+        .project-action-btn.delete {
+            background-color: var(--danger-color);
         }
         .no-projects {
             text-align: center;
@@ -300,6 +317,9 @@
             bottom: 20px;
             left: 20px;
             z-index: 100;
+        }
+        .link-option {
+            margin-top: 15px;
         }
         @media (max-width: 768px) {
             .countdown div {
@@ -346,6 +366,13 @@
             <label for="targetDate">تاريخ ووقت العد التنازلي</label>
             <input type="datetime-local" id="targetDate" required>
             <div id="dateError" class="error-message">الرجاء إدخال تاريخ صحيح</div>
+        </div>
+        <div class="form-group link-option">
+            <label for="linkOption">إنشاء رابط مشاركة:</label>
+            <select id="linkOption">
+                <option value="yes">نعم، إنشاء رابط مشاركة</option>
+                <option value="no">لا، عد تنازلي بدون رابط</option>
+            </select>
         </div>
         <div class="form-actions">
             <button id="resetBtn" class="btn btn-secondary">إعادة تعيين</button>
@@ -398,6 +425,7 @@
         const countdownDisplay = document.getElementById('countdownDisplay');
         const eventNameInput = document.getElementById('eventName');
         const targetDateInput = document.getElementById('targetDate');
+        const linkOption = document.getElementById('linkOption');
         const startBtn = document.getElementById('startBtn');
         const resetBtn = document.getElementById('resetBtn');
         const countdownTitle = document.getElementById('countdownTitle');
@@ -505,27 +533,55 @@
                 
                 // زر المشاركة داخل بطاقة المشروع
                 const shareBtn = document.createElement('button');
-                shareBtn.className = 'project-share';
+                shareBtn.className = 'project-action-btn';
                 shareBtn.innerHTML = '🔗';
                 shareBtn.title = 'مشاركة الرابط';
                 
+                // زر الحذف
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'project-action-btn delete';
+                deleteBtn.innerHTML = '🗑';
+                deleteBtn.title = 'حذف المشروع';
+                
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'project-actions';
+                actionsDiv.appendChild(shareBtn);
+                actionsDiv.appendChild(deleteBtn);
+                
                 shareBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const link = createShareLink(project);
-                    navigator.clipboard.writeText(link).then(() => {
-                        shareBtn.innerHTML = '✓';
+                    if (project.hasLink) {
+                        const link = createShareLink(project);
+                        navigator.clipboard.writeText(link).then(() => {
+                            shareBtn.innerHTML = '✓';
+                            setTimeout(() => {
+                                shareBtn.innerHTML = '🔗';
+                            }, 2000);
+                        });
+                    } else {
+                        shareBtn.innerHTML = '✖';
                         setTimeout(() => {
                             shareBtn.innerHTML = '🔗';
                         }, 2000);
-                    });
+                    }
+                });
+                
+                deleteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (confirm('هل أنت متأكد من حذف هذا المشروع؟')) {
+                        projects = projects.filter(p => p !== project);
+                        localStorage.setItem('countdownProjects', JSON.stringify(projects));
+                        renderProjects();
+                    }
                 });
                 
                 projectCard.innerHTML = `
                     <div class="project-name">${project.name || 'بدون اسم'}</div>
                     <div class="project-date">${new Date(project.date).toLocaleString('ar-EG')}</div>
+                    ${project.hasLink ? '' : '<div style="color: var(--danger-color); font-size: 12px; margin-top: 5px;">بدون رابط مشاركة</div>'}
                 `;
                 
-                projectCard.prepend(shareBtn);
+                projectCard.prepend(actionsDiv);
                 projectCard.addEventListener('click', () => {
                     loadProject(project);
                 });
@@ -541,19 +597,24 @@
             
             targetDateInput.value = formattedDate;
             eventNameInput.value = project.name || '';
+            linkOption.value = project.hasLink ? 'yes' : 'no';
             
             setupContainer.classList.remove('hidden');
             countdownDisplay.classList.add('hidden');
             projectsContainer.classList.add('hidden');
             
             // إنشاء رابط مشاركة جديد عند تحميل المشروع
-            const shareUrl = createShareLink(project);
-            shareLink.textContent = shareUrl;
-            shareContainer.style.display = 'block';
+            if (project.hasLink) {
+                const shareUrl = createShareLink(project);
+                shareLink.textContent = shareUrl;
+                shareContainer.style.display = 'block';
+            } else {
+                shareContainer.style.display = 'none';
+            }
         }
         
         // حفظ المشروع
-        function saveProject(name, date) {
+        function saveProject(name, date, hasLink) {
             // تجنب التكرار
             const exists = projects.some(project => 
                 project.date === date && project.name === name
@@ -562,7 +623,8 @@
             if (!exists) {
                 const newProject = {
                     name: name,
-                    date: date
+                    date: date,
+                    hasLink: hasLink
                 };
                 
                 projects.unshift(newProject);
@@ -576,10 +638,21 @@
                 renderProjects();
                 
                 // إنشاء رابط مشاركة للمشروع الجديد
-                const shareUrl = createShareLink(newProject);
-                shareLink.textContent = shareUrl;
-                shareContainer.style.display = 'block';
+                if (hasLink) {
+                    const shareUrl = createShareLink(newProject);
+                    shareLink.textContent = shareUrl;
+                    shareContainer.style.display = 'block';
+                } else {
+                    shareContainer.style.display = 'none';
+                }
             }
+        }
+        
+        // حذف المشروع
+        function deleteProject(project) {
+            projects = projects.filter(p => p !== project);
+            localStorage.setItem('countdownProjects', JSON.stringify(projects));
+            renderProjects();
         }
         
         // متغيرات العد التنازلي
@@ -594,6 +667,7 @@
             
             const eventName = eventNameInput.value.trim();
             const selectedDate = new Date(targetDateInput.value);
+            const hasLink = linkOption.value === 'yes';
             
             targetDate = selectedDate;
             
@@ -613,7 +687,7 @@
             dateDisplay.textContent = targetDate.toLocaleString('ar-EG');
             
             // حفظ المشروع وإنشاء رابط المشاركة
-            saveProject(eventName, targetDateInput.value);
+            saveProject(eventName, targetDateInput.value, hasLink);
             
             // بدء العد التنازلي
             if (interval) clearInterval(interval);
@@ -630,6 +704,7 @@
         resetBtn.addEventListener('click', function() {
             eventNameInput.value = '';
             setDefaultDateTime();
+            linkOption.value = 'yes';
             dateError.style.display = 'none';
         });
         
@@ -724,7 +799,7 @@
                     shareContainer.style.display = 'block';
                     
                     // حفظ المشروع
-                    saveProject(nameParam || '', dateParam);
+                    saveProject(nameParam || '', dateParam, true);
                     
                     // بدء العد التنازلي
                     if (interval) clearInterval(interval);
