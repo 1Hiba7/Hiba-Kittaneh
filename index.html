@@ -43,7 +43,8 @@
             margin: 0;
             padding: 0;
             font-family: 'Arial', sans-serif;
-            padding-bottom: 80px; /* مساحة لأيقونة اليوتيوب */
+            display: flex;
+            flex-direction: column;
         }
 
         /* زر التبديل */
@@ -74,32 +75,61 @@
             transform: rotate(30deg);
         }
 
-        /* أيقونة اليوتيوب */
-        .youtube-icon {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: #FF0000;
-            color: white;
+        /* تذييل الصفحة */
+        .footer {
+            margin-top: auto;
+            padding: 30px 0;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .footer-icons {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 20px;
+        }
+
+        .footer-icon {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 1000;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
+            text-decoration: none !important;
         }
 
-        .youtube-icon:hover {
-            transform: scale(1.1);
-            background: #cc0000;
+        .footer-icon:hover {
+            transform: scale(1.2);
         }
 
-        .youtube-icon i {
-            font-size: 1.5rem;
+        .youtube-icon {
+            background: #FF0000;
+            color: white;
+        }
+
+        .github-icon {
+            background: #333;
+            color: white;
+        }
+
+        .tinkercad-icon {
+            background: #00B0FF;
+            color: white;
+        }
+
+        .scratch-icon {
+            background: #F7A62B;
+            color: white;
+        }
+
+        .copyright {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            opacity: 0.8;
         }
 
         /* نص متحرك */
@@ -241,18 +271,15 @@
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             }
             
-            .theme-toggle, .youtube-icon {
+            .theme-toggle {
                 bottom: 20px;
+                left: 20px;
                 width: 45px;
                 height: 45px;
             }
             
-            .theme-toggle {
-                left: 20px;
-            }
-            
-            .youtube-icon {
-                right: 20px;
+            .footer-icons {
+                gap: 15px;
             }
         }
     </style>
@@ -262,11 +289,6 @@
     <div class="theme-toggle" id="themeToggle">
         <i class="fas fa-moon"></i>
     </div>
-
-    <!-- أيقونة اليوتيوب -->
-    <a href="https://www.youtube.com/@1Hiba7" target="_blank" class="youtube-icon">
-        <i class="fab fa-youtube"></i>
-    </a>
 
     <!-- نص متحرك -->
     <div class="marquee">
@@ -283,7 +305,6 @@
     <div class="featured-section">
         <h2><i class="fas fa-crown"></i> المواقع المميزة</h2>
         <div class="gallery">
-            <!-- استبدل 'images/featured1.png' باسم ملفك الحقيقي -->
             <div class="card featured" style="animation-delay: 0.4s;">
                 <img src="11.png" alt="انتقاء الألوان من الصورة">
                 <div class="card-content">
@@ -292,7 +313,6 @@
                 </div>
             </div>
             
-            <!-- استبدل 'images/featured2.png' باسم ملفك الحقيقي -->
             <div class="card featured" style="animation-delay: 0.8s;">
                 <img src="33.png" alt="نور الإيمان">
                 <div class="card-content">
@@ -315,7 +335,6 @@
     <div class="regular-section">
         <h2><i class="fas fa-th"></i> جميع المواقع</h2>
         <div class="gallery">
-            <!-- استبدل 'images/site1.png' باسم ملفك الحقيقي -->
             <div class="card" style="animation-delay: 0.3s;">
                 <img src="22.png" alt="حساب العمر وتاريخ الميلاد">
                 <div class="card-content">
@@ -324,7 +343,6 @@
                 </div>
             </div>
             
-            <!-- استبدل 'images/site2.png' باسم ملفك الحقيقي -->
             <div class="card" style="animation-delay: 0.4s;">
                 <img src="OO.png" alt="النسخة القديمة من الموقع">
                 <div class="card-content">
@@ -333,7 +351,6 @@
                 </div>
             </div>
             
-            <!-- استبدل 'images/site3.png' باسم ملفك الحقيقي -->
             <div class="card" style="animation-delay: 0.5s;">
                 <img src="44.png" alt="أول نسخة من الموقع">
                 <div class="card-content">
@@ -359,6 +376,27 @@
             </div>
         </div>
     </div>
+
+    <!-- تذييل الصفحة -->
+    <footer class="footer">
+        <div class="footer-icons">
+            <a href="https://www.youtube.com/@1Hiba7" target="_blank" class="footer-icon youtube-icon">
+                <i class="fab fa-youtube"></i>
+            </a>
+            <a href="https://github.com/1Hiba7" target="_blank" class="footer-icon github-icon">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="https://www.tinkercad.com/users/cq3ytrzP3db-1hiba7" target="_blank" class="footer-icon tinkercad-icon">
+                <i class="fas fa-cube"></i>
+            </a>
+            <a href="https://scratch.mit.edu/users/1Hiba7/" target="_blank" class="footer-icon scratch-icon">
+                <i class="fas fa-cat"></i>
+            </a>
+        </div>
+        <div class="copyright">
+            ✿
+        </div>
+    </footer>
 
     <script>
         // تبديل الوضع مع تأثير تدرج بطيء
