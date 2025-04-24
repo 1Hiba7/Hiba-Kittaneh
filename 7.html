@@ -261,6 +261,7 @@
             box-shadow: var(--box-shadow);
             transition: transform 0.3s;
             cursor: pointer;
+            position: relative;
         }
         .project-card:hover {
             transform: translateY(-5px);
@@ -273,6 +274,21 @@
         .project-date {
             font-size: 14px;
             color: var(--text-color);
+        }
+        .project-share {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: var(--button-bg);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
         }
         .no-projects {
             text-align: center;
@@ -464,6 +480,17 @@
             return true;
         }
         
+        // إنشاء رابط مشاركة للمشروع
+        function createShareLink(project) {
+            const params = new URLSearchParams();
+            params.set('date', new Date(project.date).toISOString());
+            if (project.name) params.set('name', encodeURIComponent(project.name));
+            
+            const currentUrl = new URL(window.location.href);
+            currentUrl.search = params.toString();
+            return currentUrl.href;
+        }
+        
         // عرض المشاريع المحفوظة
         function renderProjects() {
             if (projects.length === 0) {
@@ -475,10 +502,30 @@
             projects.forEach((project, index) => {
                 const projectCard = document.createElement('div');
                 projectCard.className = 'project-card';
+                
+                // زر المشاركة داخل بطاقة المشروع
+                const shareBtn = document.createElement('button');
+                shareBtn.className = 'project-share';
+                shareBtn.innerHTML = '🔗';
+                shareBtn.title = 'مشاركة الرابط';
+                
+                shareBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const link = createShareLink(project);
+                    navigator.clipboard.writeText(link).then(() => {
+                        shareBtn.innerHTML = '✓';
+                        setTimeout(() => {
+                            shareBtn.innerHTML = '🔗';
+                        }, 2000);
+                    });
+                });
+                
                 projectCard.innerHTML = `
                     <div class="project-name">${project.name || 'بدون اسم'}</div>
                     <div class="project-date">${new Date(project.date).toLocaleString('ar-EG')}</div>
                 `;
+                
+                projectCard.prepend(shareBtn);
                 projectCard.addEventListener('click', () => {
                     loadProject(project);
                 });
@@ -498,6 +545,11 @@
             setupContainer.classList.remove('hidden');
             countdownDisplay.classList.add('hidden');
             projectsContainer.classList.add('hidden');
+            
+            // إنشاء رابط مشاركة جديد عند تحميل المشروع
+            const shareUrl = createShareLink(project);
+            shareLink.textContent = shareUrl;
+            shareContainer.style.display = 'block';
         }
         
         // حفظ المشروع
@@ -508,10 +560,12 @@
             );
             
             if (!exists) {
-                projects.unshift({
+                const newProject = {
                     name: name,
                     date: date
-                });
+                };
+                
+                projects.unshift(newProject);
                 
                 // حفظ فقط آخر 10 مشاريع
                 if (projects.length > 10) {
@@ -520,6 +574,11 @@
                 
                 localStorage.setItem('countdownProjects', JSON.stringify(projects));
                 renderProjects();
+                
+                // إنشاء رابط مشاركة للمشروع الجديد
+                const shareUrl = createShareLink(newProject);
+                shareLink.textContent = shareUrl;
+                shareContainer.style.display = 'block';
             }
         }
         
@@ -553,20 +612,7 @@
             // تحديث عرض التاريخ
             dateDisplay.textContent = targetDate.toLocaleString('ar-EG');
             
-            // إنشاء رابط المشاركة
-            const params = new URLSearchParams();
-            params.set('date', targetDate.toISOString());
-            if (eventName) params.set('name', encodeURIComponent(eventName));
-            
-            // إنشاء رابط مطلق (Absolute URL) بدلاً من النسبي
-            const currentUrl = new URL(window.location.href);
-            currentUrl.search = params.toString();
-            const shareUrl = currentUrl.href;
-            
-            shareLink.textContent = shareUrl;
-            shareContainer.style.display = 'block';
-            
-            // حفظ المشروع
+            // حفظ المشروع وإنشاء رابط المشاركة
             saveProject(eventName, targetDateInput.value);
             
             // بدء العد التنازلي
