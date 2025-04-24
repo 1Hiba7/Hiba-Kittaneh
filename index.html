@@ -47,6 +47,12 @@
             flex-direction: column;
         }
 
+        /* إخفاء العناصر قبل التحميل */
+        .preload * {
+            animation: none !important;
+            transition: none !important;
+        }
+
         /* زر التبديل */
         .theme-toggle {
             position: fixed;
@@ -163,11 +169,17 @@
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: fadeInDown 0.8s ease-out forwards;
+            animation-delay: 0.3s;
         }
 
         .header p {
             font-size: 1.1rem;
-            opacity: 0.8;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+            animation-delay: 0.6s;
         }
 
         /* قسم البطاقات المميزة */
@@ -177,18 +189,29 @@
             margin-bottom: 30px;
             border-top: 2px solid gold;
             border-bottom: 2px solid gold;
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+            animation-delay: 0.9s;
         }
 
         .featured-section h2 {
             text-align: center;
             margin-bottom: 20px;
             color: gold;
+            opacity: 0;
+            transform: scale(0.8);
+            animation: bounceIn 0.8s ease-out forwards;
+            animation-delay: 1.2s;
         }
 
         /* قسم البطاقات العادية */
         .regular-section h2 {
             text-align: center;
             margin-bottom: 20px;
+            opacity: 0;
+            transform: scale(0.8);
+            animation: bounceIn 0.8s ease-out forwards;
+            animation-delay: 1.5s;
         }
 
         .gallery {
@@ -205,14 +228,39 @@
             border-radius: 15px;
             overflow: hidden;
             opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 1s forwards;
+            transform: translateY(30px) rotateY(-15deg);
+            filter: blur(3px);
+            animation: cardEntrance 0.8s ease-out forwards;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             position: relative;
         }
 
-        @keyframes fadeInUp {
-            to { opacity: 1; transform: translateY(0); }
+        /* أنيميشن ظهور البطاقات */
+        @keyframes cardEntrance {
+            to {
+                opacity: 1;
+                transform: translateY(0) rotateY(0);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            50% { transform: scale(1.1); }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         .card.featured {
@@ -231,6 +279,14 @@
             border-radius: 5px;
             font-weight: bold;
             font-size: 0.9rem;
+            animation: pulse 2s infinite;
+            animation-delay: 2s;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
         .card img {
@@ -238,6 +294,7 @@
             height: 160px;
             object-fit: cover;
             transition: transform 0.5s ease;
+            transform-origin: center;
         }
 
         .card:hover img {
@@ -247,6 +304,7 @@
         .card-content {
             padding: 15px;
             text-align: center;
+            transform: translateZ(0);
         }
 
         .btn {
@@ -258,11 +316,12 @@
             border-radius: 25px;
             transition: all 0.3s ease;
             margin-top: 10px;
+            transform: translateZ(0);
         }
 
         .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         /* التجاوبية */
@@ -281,10 +340,14 @@
             .footer-icons {
                 gap: 15px;
             }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
-<body>
+<body class="preload">
     <!-- زر التبديل -->
     <div class="theme-toggle" id="themeToggle">
         <i class="fas fa-moon"></i>
@@ -305,7 +368,7 @@
     <div class="featured-section">
         <h2><i class="fas fa-crown"></i> المواقع المميزة</h2>
         <div class="gallery">
-            <div class="card featured" style="animation-delay: 0.4s;">
+            <div class="card featured" style="animation-delay: 1.8s;">
                 <img src="11.png" alt="انتقاء الألوان من الصورة">
                 <div class="card-content">
                     <h3>انتقاء الألوان من الصورة</h3>
@@ -313,7 +376,7 @@
                 </div>
             </div>
             
-            <div class="card featured" style="animation-delay: 0.8s;">
+            <div class="card featured" style="animation-delay: 2.1s;">
                 <img src="33.png" alt="نور الإيمان">
                 <div class="card-content">
                     <h3>نور الإيمان</h3>
@@ -321,7 +384,7 @@
                 </div>
             </div>
             
-            <div class="card featured" style="animation-delay: 1.2s;">
+            <div class="card featured" style="animation-delay: 2.4s;">
                 <img src="55.png" alt="الطقس">
                 <div class="card-content">
                     <h3>الطقس</h3>
@@ -335,7 +398,7 @@
     <div class="regular-section">
         <h2><i class="fas fa-th"></i> جميع المواقع</h2>
         <div class="gallery">
-            <div class="card" style="animation-delay: 0.3s;">
+            <div class="card" style="animation-delay: 2.7s;">
                 <img src="22.png" alt="حساب العمر وتاريخ الميلاد">
                 <div class="card-content">
                     <h3>حساب العمر وتاريخ الميلاد</h3>
@@ -343,7 +406,7 @@
                 </div>
             </div>
             
-            <div class="card" style="animation-delay: 0.4s;">
+            <div class="card" style="animation-delay: 3.0s;">
                 <img src="OO.png" alt="النسخة القديمة من الموقع">
                 <div class="card-content">
                     <h3>النسخة القديمة من الموقع</h3>
@@ -351,7 +414,7 @@
                 </div>
             </div>
             
-            <div class="card" style="animation-delay: 0.5s;">
+            <div class="card" style="animation-delay: 3.3s;">
                 <img src="44.png" alt="أول نسخة من الموقع">
                 <div class="card-content">
                     <h3>أول نسخة من الموقع</h3>
@@ -359,7 +422,7 @@
                 </div>
             </div>
 
-            <div class="card" style="animation-delay: 0.4s;">
+            <div class="card" style="animation-delay: 3.6s;">
                 <img src="66.png" alt="آلة حاسبة">
                 <div class="card-content">
                     <h3>آلة حاسبة</h3>
@@ -367,7 +430,7 @@
                 </div>
             </div>
 
-            <div class="card" style="animation-delay: 0.4s;">
+            <div class="card" style="animation-delay: 3.9s;">
                 <img src="77.png" alt="عد تنازلي لمناسبة معينة">
                 <div class="card-content">
                     <h3>عد تنازلي لمناسبة معينة</h3>
@@ -399,45 +462,56 @@
     </footer>
 
     <script>
-        // تبديل الوضع مع تأثير تدرج بطيء
-        const themeToggle = document.getElementById('themeToggle');
-        const icon = themeToggle.querySelector('i');
-        
-        // تحميل التفضيل المحفوظ
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        if (savedTheme === 'light') {
-            document.body.classList.add('light-mode');
-            icon.classList.replace('fa-moon', 'fa-sun');
-        }
-
-        // حدث التبديل
-        themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('light-mode');
+        // إزالة حالة preload بعد تحميل الصفحة
+        window.addEventListener('load', function() {
+            document.body.classList.remove('preload');
             
-            setTimeout(() => {
-                if (document.body.classList.contains('light-mode')) {
-                    icon.classList.replace('fa-moon', 'fa-sun');
-                    localStorage.setItem('theme', 'light');
-                } else {
-                    icon.classList.replace('fa-sun', 'fa-moon');
-                    localStorage.setItem('theme', 'dark');
-                }
-            }, 300);
-        });
+            // تبديل الوضع مع تأثير تدرج بطيء
+            const themeToggle = document.getElementById('themeToggle');
+            const icon = themeToggle.querySelector('i');
+            
+            // تحميل التفضيل المحفوظ
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                icon.classList.replace('fa-moon', 'fa-sun');
+            }
 
-        // ظهور البطاقات عند التمرير
-        document.addEventListener("DOMContentLoaded", () => {
-            const cards = document.querySelectorAll(".card");
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = "1";
-                        entry.target.style.transform = "translateY(0)";
+            // حدث التبديل
+            themeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('light-mode');
+                
+                setTimeout(() => {
+                    if (document.body.classList.contains('light-mode')) {
+                        icon.classList.replace('fa-moon', 'fa-sun');
+                        localStorage.setItem('theme', 'light');
+                    } else {
+                        icon.classList.replace('fa-sun', 'fa-moon');
+                        localStorage.setItem('theme', 'dark');
                     }
-                });
-            }, { threshold: 0.1 });
+                }, 300);
+            });
+
+            // ظهور البطاقات عند التمرير مع تأثيرات متتالية
+            const cards = document.querySelectorAll(".card");
             
-            cards.forEach(card => observer.observe(card));
+            cards.forEach((card) => {
+                // مراقبة ظهور البطاقات
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const delay = card.style.animationDelay || '0s';
+                            setTimeout(() => {
+                                entry.target.style.opacity = "1";
+                                entry.target.style.transform = "translateY(0) rotateY(0)";
+                                entry.target.style.filter = "blur(0)";
+                            }, parseFloat(delay) * 1000);
+                        }
+                    });
+                }, { threshold: 0.1 });
+                
+                observer.observe(card);
+            });
         });
     </script>
 </body>
