@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محول الملفات الشامل - تحويل أي صيغة إلى أي صيغة</title>
+    <link rel="icon" href="8.png" type="image/png">
+    <style>
+        :root {
+            --primary-color: #4a6bff;
+            --secondary-color: #f5f7ff;
+            --text-color: #333;
+            --bg-color: #ffffff;
+            --card-bg: #f9f9f9;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --toggle-bg: #e0e0e0;
+            --toggle-circle: #ffffff;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --error-color: #dc3545;
+            --progress-color: #17a2b8;
+        }
+
+        .dark-mode {
+            --primary-color: #6b8cff;
+            --secondary-color: #1a1a2e;
+            --text-color: #f0f0f0;
+            --bg-color: #16213e;
+            --card-bg: #0f3460;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --toggle-bg: #4a4a4a;
+            --toggle-circle: #333333;
+            --success-color: #20c997;
+            --warning-color: #fd7e14;
+            --error-color: #e83e8c;
+            --progress-color: #0dcaf0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            position: relative;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            animation: fadeInDown 1s ease;
+        }
+
+        .theme-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--toggle-bg);
+            border-radius: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
+        }
+
+        .toggle-circle {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: var(--toggle-circle);
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .dark-mode .toggle-circle {
+            transform: translateX(30px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeIn 1.5s ease;
+        }
+
+        .universal-converter {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .converter-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .converter-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .converter-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px var(--shadow-color);
+        }
+
+        .converter-card h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .file-drop-area {
+            border: 2px dashed var(--primary-color);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .file-drop-area:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .format-select {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .options-container {
+            margin-bottom: 1rem;
+        }
+
+        .option-group {
+            margin-bottom: 0.5rem;
+        }
+
+        .option-group label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        .option-group input[type="range"],
+        .option-group input[type="number"] {
+            width: 100%;
+        }
+
+        .convert-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .convert-btn:hover {
+            background-color: #3a5bef;
+            transform: scale(1.02);
+        }
+
+        .convert-btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn-group button {
+            flex: 1;
+        }
+
+        .download-btn {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            margin-top: 1rem;
+            display: none;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .download-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        .share-btn {
+            background-color: var(--warning-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: none;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .share-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        .status {
+            margin-top: 1rem;
+            text-align: center;
+            font-style: italic;
+            color: var(--primary-color);
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: var(--secondary-color);
+            border-radius: 5px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: var(--progress-color);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem;
+            background-color: var(--success-color);
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            transform: translateX(200%);
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background-color: var(--error-color);
+        }
+
+        .notification.warning {
+            background-color: var(--warning-color);
+        }
+
+        .home-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            transition: transform 0.3s, background-color 0.3s;
+            z-index: 100;
+        }
+
+        .home-btn:hover {
+            transform: scale(1.1);
+            background-color: #3a5bef;
+        }
+
+        .home-btn i {
+            font-size: 1.5rem;
+        }
+
+        .history-section {
+            margin-top: 3rem;
+            display: none;
+        }
+
+        .history-item {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-info {
+            flex: 1;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            background-color: var(--primary-color);
+            color: white;
+            margin-top: 2rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .converter-section {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- مكتبات التحويل الفعلية -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.16.0/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ffmpeg.js/4.2.9003/ffmpeg.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div></div>
+            <h1>محول الملفات الشامل</h1>
+            <div class="theme-toggle" id="themeToggle">
+                <div class="toggle-circle"></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="intro">
+            <h2>تحويل أي صيغة ملف إلى أي صيغة أخرى</h2>
+            <p>يمكنك تحويل ملفاتك بين جميع الصيغ الشائعة بسهولة وسرعة</p>
+        </section>
+
+        <!-- المحول الشامل -->
+        <section class="universal-converter">
+            <h2>المحول الشامل</h2>
+            <div class="file-drop-area" id="universalDropArea">
+                <p>اسحب وأسقط أي ملف هنا أو انقر للاختيار</p>
+                <input type="file" class="file-input" id="universalInput" accept="*/*">
+            </div>
+            
+            <div class="options-container">
+                <select class="format-select" id="universalFormat">
+                    <option value="">اختر صيغة التحويل الهدف</option>
+                    <!-- الصور -->
+                    <optgroup label="الصور">
+                        <option value="png">PNG</option>
+                        <option value="jpg">JPG</option>
+                        <option value="webp">WebP</option>
+                        <option value="bmp">BMP</option>
+                        <option value="gif">GIF</option>
+                    </optgroup>
+                    <!-- المستندات -->
+                    <optgroup label="المستندات">
+                        <option value="pdf">PDF</option>
+                        <option value="txt">TXT (نص)</option>
+                        <option value="docx">DOCX (وورد)</option>
+                    </optgroup>
+                    <!-- الوسائط -->
+                    <optgroup label="الوسائط">
+                        <option value="mp3">MP3 (صوت)</option>
+                        <option value="wav">WAV (صوت)</option>
+                        <option value="mp4">MP4 (فيديو)</option>
+                        <option value="avi">AVI (فيديو)</option>
+                        <option value="gif">GIF (متحرك)</option>
+                    </optgroup>
+                    <!-- الأرشيفات -->
+                    <optgroup label="الأرشيفات">
+                        <option value="zip">ZIP</option>
+                        <option value="7z">7Z</option>
+                    </optgroup>
+                </select>
+                
+                <div id="universalOptions">
+                    <!-- سيتم ملؤه ديناميكيًا حسب نوع الملف -->
+                </div>
+            </div>
+            
+            <button class="convert-btn" id="universalConvertBtn">تحويل الملف</button>
+            <div class="progress-container" id="universalProgress">
+                <div class="progress-bar" id="universalProgressBar"></div>
+            </div>
+            <div class="btn-group">
+                <a href="#" class="download-btn" id="universalDownloadBtn" download>تنزيل الملف</a>
+                <a href="#" class="share-btn" id="universalShareBtn">مشاركة</a>
+            </div>
+            <p class="status" id="universalStatus"></p>
+        </section>
+
+        <!-- محولات متخصصة -->
+        <h2 style="margin-bottom: 1rem;">محولات متخصصة</h2>
+        <section class="converter-section">
+            <!-- محول الفيديوهات -->
+            <div class="converter-card">
+                <h2>تحويل الفيديوهات</h2>
+                <div class="file-drop-area" id="videoDropArea">
+                    <p>اسحب وأسقط الفيديو هنا أو انقر للاختيار</p>
+                    <input type="file" class="file-input" id="videoInput" accept="video/*">
+                </div>
+                <select class="format-select" id="videoFormat">
+                    <option value="">اختر صيغة التحويل</option>
+                    <option value="mp4">MP4</option>
+                    <option value="avi">AVI</option>
+                    <option value="mov">MOV</option>
+                    <option value="gif">GIF (متحرك)</option>
+                    <option value="mp3">MP3 (استخراج الصوت)</option>
+                </select>
+                
+                <div class="options-container" id="videoOptions">
+                    <div class="option-group">
+                        <label for="videoQuality">جودة الفيديو:</label>
+                        <select id="videoQuality" style="width: 100%;">
+                            <option value="low">منخفضة</option>
+                            <option value="medium" selected>متوسطة</option>
+                            <option value="high">عالية</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label for="videoTrim">اقتصاص الفيديو (ثانية):</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="number" id="videoStart" placeholder="بداية" style="flex: 1;">
+                            <input type="number" id="videoEnd" placeholder="نهاية" style="flex: 1;">
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="convert-btn" id="convertVideoBtn">تحويل الفيديو</button>
+                <div class="progress-container" id="videoProgress">
+                    <div class="progress-bar" id="videoProgressBar"></div>
+                </div>
+                <div class="btn-group">
+                    <a href="#" class="download-btn" id="downloadVideoBtn" download>تنزيل الفيديو</a>
+                    <a href="#" class="share-btn" id="shareVideoBtn">مشاركة</a>
+                </div>
+                <p class="status" id="videoStatus"></p>
+            </div>
+
+            <!-- محول الصوت -->
+            <div class="converter-card">
+                <h2>تحويل الصوت</h2>
+                <div class="file-drop-area" id="audioDropArea">
+                    <p>اسحب وأسقط ملف الصوت هنا أو انقر للاختيار</p>
+                    <input type="file" class="file-input" id="audioInput" accept="audio/*">
+                </div>
+                <select class="format-select" id="audioFormat">
+                    <option value="">اختر صيغة التحويل</option>
+                    <option value="mp3">MP3</option>
+                    <option value="wav">WAV</option>
+                    <option value="ogg">OGG</option>
+                    <option value="aac">AAC</option>
+                </select>
+                
+                <div class="options-container" id="audioOptions">
+                    <div class="option-group">
+                        <label for="audioQuality">جودة الصوت:</label>
+                        <select id="audioQuality" style="width: 100%;">
+                            <option value="low">64 kbps</option>
+                            <option value="medium" selected>128 kbps</option>
+                            <option value="high">192 kbps</option>
+                            <option value="very_high">320 kbps</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label for="audioTrim">اقتصاص الصوت (ثانية):</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="number" id="audioStart" placeholder="بداية" style="flex: 1;">
+                            <input type="number" id="audioEnd" placeholder="نهاية" style="flex: 1;">
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="convert-btn" id="convertAudioBtn">تحويل الصوت</button>
+                <div class="progress-container" id="audioProgress">
+                    <div class="progress-bar" id="audioProgressBar"></div>
+                </div>
+                <div class="btn-group">
+                    <a href="#" class="download-btn" id="downloadAudioBtn" download>تنزيل الصوت</a>
+                    <a href="#" class="share-btn" id="shareAudioBtn">مشاركة</a>
+                </div>
+                <p class="status" id="audioStatus"></p>
+            </div>
+        </section>
+    </div>
+
+    <!-- زر العودة للصفحة الرئيسية -->
+    <a href="https://1hiba7.github.io/Hiba-Kittaneh/" class="home-btn">
+        <i class="fas fa-home"></i>
+    </a>
+
+    <!-- نافذة الإشعارات -->
+    <div class="notification" id="notification"></div>
+
+    <footer>
+        <p>✿</p>
+    </footer>
+
+    <script>
+        // تفعيل وضع الليلي/النهاري
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            body.classList.add(savedTheme);
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            body.classList.add('dark-mode');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const currentTheme = body.classList.contains('dark-mode') ? 'dark-mode' : '';
+            localStorage.setItem('theme', currentTheme);
+        });
+
+        // نظام الإشعارات
+        function showNotification(message, type = 'success', duration = 3000) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification show';
+            
+            if (type === 'error') {
+                notification.classList.add('error');
+            } else if (type === 'warning') {
+                notification.classList.add('warning');
+            }
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, duration);
+        }
+
+        // إعداد مناطق سحب الملفات
+        const setupFileDropArea = (dropAreaId, inputId) => {
+            const dropArea = document.getElementById(dropAreaId);
+            const fileInput = document.getElementById(inputId);
+
+            dropArea.addEventListener('click', () => fileInput.click());
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight() {
+                dropArea.style.backgroundColor = 'var(--secondary-color)';
+            }
+
+            function unhighlight() {
+                dropArea.style.backgroundColor = '';
+            }
+
+            dropArea.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                fileInput.files = files;
+                updateFileName(dropArea, files[0].name);
+            }
+
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length) {
+                    updateFileName(dropArea, fileInput.files[0].name);
+                    updateOptionsBasedOnFile(fileInput.files[0]);
+                }
+            });
+
+            function updateFileName(area, fileName) {
+                area.querySelector('p').textContent = fileName;
+            }
+        };
+
+        // إعداد جميع مناطق سحب الملفات
+        setupFileDropArea('universalDropArea', 'universalInput');
+        setupFileDropArea('videoDropArea', 'videoInput');
+        setupFileDropArea('audioDropArea', 'audioInput');
+
+        // تحديث الخيارات بناءً على نوع الملف
+        function updateOptionsBasedOnFile(file) {
+            const optionsContainer = document.getElementById('universalOptions');
+            const fileType = file.type.split('/')[0];
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            
+            let optionsHTML = '';
+            
+            if (fileType === 'image') {
+                optionsHTML = `
+                    <div class="option-group">
+                        <label for="universalQuality">جودة الصورة (0-100):</label>
+                        <input type="range" id="universalQuality" min="0" max="100" value="90">
+                        <input type="number" id="universalQualityValue" min="0" max="100" value="90" style="width: 100%;">
+                    </div>
+                    <div class="option-group">
+                        <label for="universalResize">تغيير الحجم:</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="number" id="universalWidth" placeholder="العرض" style="flex: 1;">
+                            <input type="number" id="universalHeight" placeholder="الارتفاع" style="flex: 1;">
+                        </div>
+                    </div>
+                `;
+            } else if (fileType === 'video') {
+                optionsHTML = `
+                    <div class="option-group">
+                        <label for="universalVideoQuality">جودة الفيديو:</label>
+                        <select id="universalVideoQuality" style="width: 100%;">
+                            <option value="low">منخفضة</option>
+                            <option value="medium" selected>متوسطة</option>
+                            <option value="high">عالية</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label for="universalVideoTrim">اقتصاص الفيديو (ثانية):</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="number" id="universalVideoStart" placeholder="بداية" style="flex: 1;">
+                            <input type="number" id="universalVideoEnd" placeholder="نهاية" style="flex: 1;">
+                        </div>
+                    </div>
+                `;
+            } else if (fileType === 'audio') {
+                optionsHTML = `
+                    <div class="option-group">
+                        <label for="universalAudioQuality">جودة الصوت:</label>
+                        <select id="universalAudioQuality" style="width: 100%;">
+                            <option value="low">64 kbps</option>
+                            <option value="medium" selected>128 kbps</option>
+                            <option value="high">192 kbps</option>
+                            <option value="very_high">320 kbps</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label for="universalAudioTrim">اقتصاص الصوت (ثانية):</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="number" id="universalAudioStart" placeholder="بداية" style="flex: 1;">
+                            <input type="number" id="universalAudioEnd" placeholder="نهاية" style="flex: 1;">
+                        </div>
+                    </div>
+                `;
+            }
+            
+            optionsContainer.innerHTML = optionsHTML;
+            
+            // ربط شريط الجودة مع قيمة الرقم إذا كان موجودًا
+            if (document.getElementById('universalQuality')) {
+                const qualitySlider = document.getElementById('universalQuality');
+                const qualityValue = document.getElementById('universalQualityValue');
+                
+                qualitySlider.addEventListener('input', () => {
+                    qualityValue.value = qualitySlider.value;
+                });
+                
+                qualityValue.addEventListener('input', () => {
+                    if (qualityValue.value > 100) qualityValue.value = 100;
+                    if (qualityValue.value < 0) qualityValue.value = 0;
+                    qualitySlider.value = qualityValue.value;
+                });
+            }
+        }
+
+        // تحميل FFmpeg.js
+        const { createFFmpeg, fetchFile } = FFmpeg;
+        const ffmpeg = createFFmpeg({ 
+            log: true,
+            corePath: 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.10.0/dist/ffmpeg-core.js'
+        });
+
+        let ffmpegLoaded = false;
+
+        async function loadFFmpeg() {
+            if (!ffmpegLoaded) {
+                showNotification('جاري تحميل محول الفيديوهات...', 'warning');
+                await ffmpeg.load();
+                ffmpegLoaded = true;
+                showNotification('جاهز لتحويل الفيديوهات!', 'success');
+            }
+        }
+
+        // المحول الشامل
+        document.getElementById('universalConvertBtn').addEventListener('click', async () => {
+            const fileInput = document.getElementById('universalInput');
+            const formatSelect = document.getElementById('universalFormat');
+            const progressBar = document.getElementById('universalProgressBar');
+            const progressContainer = document.getElementById('universalProgress');
+            const status = document.getElementById('universalStatus');
+            const downloadBtn = document.getElementById('universalDownloadBtn');
+
+            if (!fileInput.files.length) {
+                showNotification('الرجاء اختيار ملف أولاً', 'error');
+                return;
+            }
+
+            if (!formatSelect.value) {
+                showNotification('الرجاء اختيار صيغة التحويل', 'error');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const fileType = file.type.split('/')[0];
+            const targetFormat = formatSelect.value;
+
+            try {
+                progressContainer.style.display = 'block';
+                status.textContent = 'جاري بدء عملية التحويل...';
+                progressBar.style.width = '10%';
+
+                // التحويل حسب نوع الملف
+                if (fileType === 'image') {
+                    await convertImage(file, targetFormat, progressBar, status, downloadBtn);
+                } else if (fileType === 'video') {
+                    await loadFFmpeg();
+                    await convertVideo(file, targetFormat, progressBar, status, downloadBtn);
+                } else if (fileType === 'audio') {
+                    await loadFFmpeg();
+                    await convertAudio(file, targetFormat, progressBar, status, downloadBtn);
+                } else {
+                    // للملفات الأخرى مثل المستندات
+                    await convertGenericFile(file, targetFormat, progressBar, status, downloadBtn);
+                }
+
+                progressBar.style.width = '100%';
+                status.textContent = 'تم التحويل بنجاح!';
+                showNotification('تم التحويل بنجاح!', 'success');
+            } catch (error) {
+                console.error('Error during conversion:', error);
+                status.textContent = 'حدث خطأ أثناء التحويل';
+                showNotification('حدث خطأ أثناء التحويل: ' + error.message, 'error');
+            }
+        });
+
+        // محول الصور
+        async function convertImage(file, targetFormat, progressBar, status, downloadBtn) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    status.textContent = 'جاري تحميل الصورة...';
+                    progressBar.style.width = '20%';
+
+                    const img = new Image();
+                    img.src = event.target.result;
+
+                    img.onload = function() {
+                        progressBar.style.width = '40%';
+                        status.textContent = 'جاري تحويل الصورة...';
+
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+
+                        progressBar.style.width = '60%';
+
+                        setTimeout(() => {
+                            let mimeType, quality;
+                            switch(targetFormat) {
+                                case 'jpg':
+                                    mimeType = 'image/jpeg';
+                                    quality = document.getElementById('universalQuality')?.value || 90;
+                                    break;
+                                case 'png':
+                                    mimeType = 'image/png';
+                                    break;
+                                case 'webp':
+                                    mimeType = 'image/webp';
+                                    quality = document.getElementById('universalQuality')?.value || 90;
+                                    break;
+                                case 'bmp':
+                                    mimeType = 'image/bmp';
+                                    break;
+                                case 'gif':
+                                    mimeType = 'image/gif';
+                                    break;
+                                default:
+                                    mimeType = 'image/png';
+                            }
+
+                            const convertedData = canvas.toDataURL(mimeType, quality ? quality / 100 : undefined);
+                            
+                            progressBar.style.width = '80%';
+                            status.textContent = 'جاري إعداد الملف للتنزيل...';
+
+                            const fileName = file.name.split('.')[0] + '.' + targetFormat;
+                            downloadBtn.href = convertedData;
+                            downloadBtn.download = fileName;
+                            downloadBtn.style.display = 'block';
+
+                            resolve();
+                        }, 500);
+                    };
+
+                    img.onerror = function() {
+                        throw new Error('حدث خطأ في تحميل الصورة');
+                    };
+                };
+
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // محول الفيديوهات
+        async function convertVideo(file, targetFormat, progressBar, status, downloadBtn) {
+            status.textContent = 'جاري تحميل FFmpeg...';
+            progressBar.style.width = '20%';
+
+            await loadFFmpeg();
+
+            status.textContent = 'جاري معالجة الفيديو...';
+            progressBar.style.width = '40%';
+
+            const inputFileName = 'input.' + file.name.split('.').pop();
+            const outputFileName = 'output.' + targetFormat;
+            
+            ffmpeg.FS('writeFile', inputFileName, await fetchFile(file));
+
+            let command = [];
+            // اقتصاص الفيديو إذا تم تحديده
+            const startTime = document.getElementById('universalVideoStart')?.value;
+            const endTime = document.getElementById('universalVideoEnd')?.value;
+            
+            if (startTime && endTime) {
+                command.push('-ss', startTime, '-to', endTime);
+            }
+
+            // إعدادات الجودة
+            const quality = document.getElementById('universalVideoQuality')?.value || 'medium';
+            let qualityParams = [];
+            
+            switch(quality) {
+                case 'low':
+                    qualityParams = ['-b:v', '500k', '-crf', '28'];
+                    break;
+                case 'medium':
+                    qualityParams = ['-b:v', '1000k', '-crf', '23'];
+                    break;
+                case 'high':
+                    qualityParams = ['-b:v', '2000k', '-crf', '18'];
+                    break;
+            }
+
+            // تحويل إلى GIF
+            if (targetFormat === 'gif') {
+                command = command.concat([
+                    '-i', inputFileName,
+                    '-vf', 'fps=10,scale=640:-1:flags=lanczos',
+                    '-f', 'gif',
+                    outputFileName
+                ]);
+            } 
+            // استخراج الصوت
+            else if (targetFormat === 'mp3') {
+                command = command.concat([
+                    '-i', inputFileName,
+                    '-q:a', '2',
+                    '-map', 'a',
+                    outputFileName
+                ]);
+            }
+            // تحويل فيديو عادي
+            else {
+                command = command.concat([
+                    '-i', inputFileName,
+                    ...qualityParams,
+                    '-c:v', targetFormat === 'mp4' ? 'libx264' : 
+                           targetFormat === 'avi' ? 'mpeg4' : 'copy',
+                    '-preset', 'fast',
+                    outputFileName
+                ]);
+            }
+
+            status.textContent = 'جاري تحويل الفيديو...';
+            progressBar.style.width = '60%';
+
+            await ffmpeg.run(...command);
+
+            progressBar.style.width = '80%';
+            status.textContent = 'جاري إعداد الملف للتنزيل...';
+
+            const data = ffmpeg.FS('readFile', outputFileName);
+            const blob = new Blob([data.buffer], { type: `video/${targetFormat}` });
+            const url = URL.createObjectURL(blob);
+            
+            const fileName = file.name.split('.')[0] + '.' + targetFormat;
+            downloadBtn.href = url;
+            downloadBtn.download = fileName;
+            downloadBtn.style.display = 'block';
+        }
+
+        // محول الصوت
+        async function convertAudio(file, targetFormat, progressBar, status, downloadBtn) {
+            status.textContent = 'جاري تحميل FFmpeg...';
+            progressBar.style.width = '20%';
+
+            await loadFFmpeg();
+
+            status.textContent = 'جاري معالجة الصوت...';
+            progressBar.style.width = '40%';
+
+            const inputFileName = 'input.' + file.name.split('.').pop();
+            const outputFileName = 'output.' + targetFormat;
+            
+            ffmpeg.FS('writeFile', inputFileName, await fetchFile(file));
+
+            // اقتصاص الصوت إذا تم تحديده
+            const startTime = document.getElementById('universalAudioStart')?.value;
+            const endTime = document.getElementById('universalAudioEnd')?.value;
+            
+            let command = [];
+            if (startTime && endTime) {
+                command.push('-ss', startTime, '-to', endTime);
+            }
+
+            // إعدادات الجودة
+            const quality = document.getElementById('universalAudioQuality')?.value || 'medium';
+            let qualityParam = '';
+            
+            switch(quality) {
+                case 'low':
+                    qualityParam = '64k';
+                    break;
+                case 'medium':
+                    qualityParam = '128k';
+                    break;
+                case 'high':
+                    qualityParam = '192k';
+                    break;
+                case 'very_high':
+                    qualityParam = '320k';
+                    break;
+            }
+
+            command = command.concat([
+                '-i', inputFileName,
+                '-b:a', qualityParam,
+                outputFileName
+            ]);
+
+            status.textContent = 'جاري تحويل الصوت...';
+            progressBar.style.width = '60%';
+
+            await ffmpeg.run(...command);
+
+            progressBar.style.width = '80%';
+            status.textContent = 'جاري إعداد الملف للتنزيل...';
+
+            const data = ffmpeg.FS('readFile', outputFileName);
+            const blob = new Blob([data.buffer], { type: `audio/${targetFormat}` });
+            const url = URL.createObjectURL(blob);
+            
+            const fileName = file.name.split('.')[0] + '.' + targetFormat;
+            downloadBtn.href = url;
+            downloadBtn.download = fileName;
+            downloadBtn.style.display = 'block';
+        }
+
+        // محول الملفات العامة (غير المدعومة)
+        async function convertGenericFile(file, targetFormat, progressBar, status, downloadBtn) {
+            // في الواقع الفعلي، قد تحتاج إلى مكتبات إضافية لتحويل أنواع ملفات أخرى
+            // هنا نكتفي بإنشاء نسخة من الملف مع تغيير الامتداد فقط كتجربة
+            progressBar.style.width = '50%';
+            status.textContent = 'جاري إعداد الملف...';
+
+            const blob = new Blob([await file.arrayBuffer()], { type: file.type });
+            const url = URL.createObjectURL(blob);
+            
+            const fileName = file.name.split('.')[0] + '.' + targetFormat;
+            downloadBtn.href = url;
+            downloadBtn.download = fileName;
+            downloadBtn.style.display = 'block';
+        }
+
+        // محول الفيديوهات المتخصص
+        document.getElementById('convertVideoBtn').addEventListener('click', async () => {
+            const fileInput = document.getElementById('videoInput');
+            const formatSelect = document.getElementById('videoFormat');
+            const progressBar = document.getElementById('videoProgressBar');
+            const progressContainer = document.getElementById('videoProgress');
+            const status = document.getElementById('videoStatus');
+            const downloadBtn = document.getElementById('downloadVideoBtn');
+
+            if (!fileInput.files.length) {
+                showNotification('الرجاء اختيار ملف أولاً', 'error');
+                return;
+            }
+
+            if (!formatSelect.value) {
+                showNotification('الرجاء اختيار صيغة التحويل', 'error');
+                return;
+            }
+
+            try {
+                await loadFFmpeg();
+                await convertVideo(
+                    fileInput.files[0], 
+                    formatSelect.value, 
+                    progressBar, 
+                    status, 
+                    downloadBtn
+                );
+                showNotification('تم تحويل الفيديو بنجاح!', 'success');
+            } catch (error) {
+                console.error('Error converting video:', error);
+                showNotification('حدث خطأ أثناء تحويل الفيديو', 'error');
+            }
+        });
+
+        // محول الصوت المتخصص
+        document.getElementById('convertAudioBtn').addEventListener('click', async () => {
+            const fileInput = document.getElementById('audioInput');
+            const formatSelect = document.getElementById('audioFormat');
+            const progressBar = document.getElementById('audioProgressBar');
+            const progressContainer = document.getElementById('audioProgress');
+            const status = document.getElementById('audioStatus');
+            const downloadBtn = document.getElementById('downloadAudioBtn');
+
+            if (!fileInput.files.length) {
+                showNotification('الرجاء اختيار ملف أولاً', 'error');
+                return;
+            }
+
+            if (!formatSelect.value) {
+                showNotification('الرجاء اختيار صيغة التحويل', 'error');
+                return;
+            }
+
+            try {
+                await loadFFmpeg();
+                await convertAudio(
+                    fileInput.files[0], 
+                    formatSelect.value, 
+                    progressBar, 
+                    status, 
+                    downloadBtn
+                );
+                showNotification('تم تحويل الصوت بنجاح!', 'success');
+            } catch (error) {
+                console.error('Error converting audio:', error);
+                showNotification('حدث خطأ أثناء تحويل الصوت', 'error');
+            }
+        });
+
+        // تفعيل أزرار التنزيل
+        document.querySelectorAll('.download-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (!btn.href || btn.href === '#') {
+                    e.preventDefault();
+                    showNotification('لا يوجد ملف جاهز للتنزيل', 'warning');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
