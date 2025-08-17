@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>لعبة اختبر ذاكرتك</title>
+  <!-- الرمز المفضل المطلوب -->
+  <link rel="icon" href="12.png" type="image/png" />
+  <style>
+    /* =============== الأساسيات و الثيم =============== */
+    :root{
+      --bg: #f6f7fb;
+      --surface: #ffffff;
+      --surface-2:#f1f5f9;
+      --text: #0f172a;
+      --muted:#475569;
+      --primary:#0ea5a4;
+      --accent:#f59e0b;
+      --success:#10b981;
+      --danger:#ef4444;
+      --shadow: 0 10px 30px rgba(2,6,23,.08);
+      --transition: .8s; /* انتقال ناعم بين الثيمين */
+    }
+    html[data-theme="dark"]{
+      --bg:#0b1220; 
+      --surface:#0f172a; 
+      --surface-2:#111827; 
+      --text:#e5e7eb; 
+      --muted:#93a3b8; 
+      --primary:#06b6d4; 
+      --accent:#fbbf24; 
+      --success:#34d399; 
+      --danger:#f87171; 
+      --shadow: 0 10px 30px rgba(0,0,0,.5);
+    }
+
+    *{box-sizing:border-box}
+    html, body, .container, .board-wrap, aside, .front, .back, header, main, footer, .theme-toggle{
+      transition: background-color var(--transition), color var(--transition), box-shadow var(--transition), border-color var(--transition);
+    }
+    body{
+      margin:0;min-height:100vh;background:var(--bg);color:var(--text);font-family: 'Segoe UI', Tahoma, Arial, sans-serif;display:flex;justify-content:center;padding:20px
+    }
+    .container{width:100%;max-width:1100px;background:var(--surface);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+
+    header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 16px;background:linear-gradient(180deg, var(--surface), var(--surface-2))}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand .logo{width:48px;height:48px;border-radius:12px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+    .brand .logo img{width:100%;height:100%;object-fit:cover}
+    h1{font-size:18px;margin:0}
+    .muted{color:var(--muted);font-size:13px;margin:0}
+
+    .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .btn{border:0;border-radius:12px;padding:10px 12px;cursor:pointer;font-weight:700}
+    .btn.primary{background:var(--primary);color:#072}
+    .btn.ghost{background:transparent;box-shadow:inset 0 0 0 1px rgba(148,163,184,.35);color:var(--text)}
+    .home{background:linear-gradient(90deg,var(--accent),#fb923c);color:#132;padding:10px 14px;border-radius:12px;text-decoration:none;font-weight:800}
+
+    .stats{display:flex;gap:8px;flex-wrap:wrap}
+    .stat{background:var(--surface-2);border-radius:12px;padding:8px 10px;font-size:13px}
+
+    main{display:grid;grid-template-columns:1fr 340px;gap:16px;padding:16px}
+
+    /* =============== اللوحة (البطاقات) =============== */
+    .board-wrap{background:var(--surface-2);border-radius:16px;padding:12px}
+    .board{display:grid;gap:10px;justify-items:center}
+    .board.auto{grid-template-columns: repeat(auto-fit, minmax(82px, 1fr));}
+
+    .card{width:100%;aspect-ratio:3/4;max-width:140px;border-radius:14px;position:relative;transform-style:preserve-3d;transition:transform .35s ease, box-shadow .3s ease;cursor:pointer;box-shadow:0 6px 18px rgba(2,6,23,.06);}
+    .card:focus{outline:2px solid var(--primary)}
+    .card .face{position:absolute;inset:0;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;backface-visibility:hidden}
+
+    /* خلفية ملوّنة مبهجة للوجه الخلفي */
+    .back{color:#fff; background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.02)); box-shadow:inset 0 0 0 2px rgba(255,255,255,.06)}
+    .back::before{content:"";position:absolute;inset:0;border-radius:14px;background: conic-gradient(from 0deg, #06b6d4, #a78bfa, #f43f5e, #f59e0b, #06b6d4);filter:saturate(120%) blur(20px);opacity:.35;z-index:-1}
+
+    .front{background:linear-gradient(180deg,#fff,#f8fafc); color:#0b1420; transform:rotateY(180deg)}
+    html[data-theme="dark"] .front{background:linear-gradient(180deg,#0f172a,#0b1220); color:#e5e7eb}
+
+    .card.flipped{transform:rotateY(180deg)}
+
+    /* مؤثرات المطابقة وعدم المطابقة */
+    .card.match .front{animation:pulse 600ms ease}
+    .card.no-match{animation:shake 500ms ease}
+    .card.no-match .front{box-shadow:0 0 0 3px var(--danger) inset}
+    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(16,185,129,0.0)}50%{box-shadow:0 0 0 6px rgba(16,185,129,0.35)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0.0)}}
+    @keyframes shake{0%,100%{transform:rotateY(180deg) translateX(0)}25%{transform:rotateY(180deg) translateX(-6px)}75%{transform:rotateY(180deg) translateX(6px)}}
+
+    /* =============== الشريط الجانبي =============== */
+    aside{background:var(--surface-2);border-radius:16px;padding:14px}
+    .aside-section{margin-bottom:12px}
+    label{display:block;font-size:13px;margin-bottom:6px}
+
+    select, .select{
+      width:100%;padding:10px;border-radius:10px;border:1px solid rgba(148,163,184,.35);background:var(--surface);color:var(--text);appearance:none;position:relative
+    }
+    select:focus{outline:2px solid var(--primary)}
+    option{background:var(--surface);color:var(--text)}
+
+    .tip{font-size:13px;color:var(--muted);background:var(--surface);border-radius:10px;padding:8px}
+
+    /* شريط التحكم الملوّن */
+    input[type=range]{width:100%;accent-color: var(--accent);}
+
+    /* جدول النتائج */
+    .table{width:100%;border-collapse:separate;border-spacing:0 8px}
+    .table th,.table td{padding:8px 10px;background:var(--surface);border:1px solid rgba(148,163,184,.25)}
+    .table th{background:var(--surface-2)}
+    .table tr td:first-child,.table tr th:first-child{border-radius:10px 0 0 10px}
+    .table tr td:last-child,.table tr th:last-child{border-radius:0 10px 10px 0}
+
+    footer{margin-top:10px;text-align:center;font-size:12px;color:var(--muted)}
+
+    /* =============== زر تبديل الثيم =============== */
+    .theme-toggle{position:fixed;right:14px;bottom:14px;z-index:50;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:0;background:var(--surface);box-shadow:var(--shadow);cursor:pointer}
+    .theme-toggle span{font-size:20px}
+
+    /* =============== مؤثرات الفوز (تنزل للأسفل) =============== */
+    .celebrate{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+    .confetti{position:absolute;top:-10vh;font-size:20px;will-change:transform, opacity;animation:drop 4s ease forwards}
+    @keyframes drop{0%{transform: translateY(-10vh) translateX(0) rotate(0deg);opacity:1}100%{transform: translateY(120vh) translateX(0) rotate(360deg);opacity:0}}
+
+    /* =============== تجاوبية =============== */
+    @media (max-width: 980px){main{grid-template-columns:1fr}}
+    @media (max-width: 560px){.card{max-width:110px}.brand .logo{width:42px;height:42px}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo"><img src="12.png" alt="شعار"/></div>
+        <div>
+          <h1>لعبة اختبر ذاكرتك</h1>
+          <p class="muted">اعثري على الأزواج المتشابهة بأقل عدد حركات 🌟</p>
+        </div>
+      </div>
+      <div class="controls">
+        <a class="home" href="https://1hiba7.github.io/Hiba-Kittaneh/" target="_blank" rel="noopener">العودة إلى الصفحة الرئيسية</a>
+        <button id="restart" class="btn primary">إعادة البدء</button>
+        <div class="stats">
+          <div class="stat">الحركات: <b id="moves">0</b></div>
+          <div class="stat">الوقت: <b id="time">0:00</b></div>
+          <div class="stat">المطابقات: <b id="matched">0</b>/<b id="pairs">0</b></div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="board-wrap">
+        <div id="board" class="board auto" aria-live="polite"></div>
+        <footer id="message"></footer>
+      </section>
+
+      <aside>
+        <div class="aside-section">
+          <label for="level">المستوى (10 مستويات متدرجة)</label>
+          <select id="level"></select>
+        </div>
+        <div class="aside-section">
+          <label for="flipDelay">زمن الرجوع عند عدم التطابق (ملّي ثانية): <b id="dLabel">800</b>ms</label>
+          <input id="flipDelay" type="range" min="300" max="1500" step="50" value="800">
+        </div>
+        <div class="aside-section">
+          <label>أفضل 3 نتائج لهذا المستوى</label>
+          <ol id="leaderboard" style="margin:6px 0 0 0; padding-inline-start:18px"></ol>
+        </div>
+        <div class="aside-section">
+          <label>أفضل نتيجة لكل مستوى</label>
+          <div id="bestTable"></div>
+        </div>
+        <div class="aside-section" style="display:flex; gap:8px">
+          <button id="clearStats" class="btn ghost">مسح كل النتائج</button>
+        </div>
+        <div class="aside-section tip">نصيحة: يمكنك الضغط على <b>R</b> أو <b>ق</b> لإعادة البدء بسرعة. يمكنك التبديل للوضع المظلم من زر الشمس/القمر أسفل اليمين.</div>
+      </aside>
+    </main>
+
+    <footer>© لعبة ويب تعليمية — هبة كتانة</footer>
+  </div>
+
+  <button class="theme-toggle" id="themeBtn" aria-label="تبديل المظهر"><span id="themeIcon">☀️</span></button>
+  <div id="celebrate" class="celebrate" hidden></div>
+
+  <script>
+    // ==================== الإعدادات العامة ====================
+    const boardEl = document.getElementById('board');
+    const movesEl = document.getElementById('moves');
+    const timeEl = document.getElementById('time');
+    const matchedEl = document.getElementById('matched');
+    const pairsEl = document.getElementById('pairs');
+    const restartBtn = document.getElementById('restart');
+    const levelSel = document.getElementById('level');
+    const flipDelayInput = document.getElementById('flipDelay');
+    const dLabel = document.getElementById('dLabel');
+    const celebrateLayer = document.getElementById('celebrate');
+    const clearBtn = document.getElementById('clearStats');
+
+    // 10 مستويات متدرجة بعدد أزواج متزايد
+    const LEVELS = [6,8,10,12,14,16,18,20,22,24]; // أزواج
+
+    // مجموعة رموز كبيرة تكفي لأعلى مستوى (24 زوج = 48 بطاقة)
+    const EMOJIS = [
+      '🍎','🍌','🍇','🍉','🍓','🍒','🍍','🥝','🥑','🍑','🍋','🍐','🍊','🥥','🥕','🌽','🍆','🥔','🧀','🥨','🍪','🍩','🍰','🧁','🍫','🍬','🍭','☕','🫖','🥛','🍯','🍗','🍟','🍕','🌮','🌯','🥙','🍣','🍤','🍜','🍝','🥗','🥪','🍲','🍥','🥟','🍱','🍙','🍚','🧇','🥞','🍳','🧆','🥮','🍧','🍨','🍦','🍢','🥠','🥮','🍘','🍥'
+    ];
+
+    let first = null, second = null, lock = false; 
+    let moves = 0, matched = 0, totalPairs = LEVELS[0];
+    let timer = null, seconds = 0;
+
+    // ==================== مؤقت ====================
+    function pad(n){return n.toString().padStart(2,'0')}
+    function fmtTime(s){const m = Math.floor(s/60); const r=s%60; return `${m}:${pad(r)}`}
+
+    function startTimer(){clearInterval(timer); seconds=0; timeEl.textContent = fmtTime(0); timer=setInterval(()=>{seconds++; timeEl.textContent = fmtTime(seconds)},1000)}
+    function stopTimer(){clearInterval(timer)}
+
+    // ==================== أدوات مساعدة ====================
+    function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}return arr}
+
+    function buildLevelOptions(){
+      levelSel.innerHTML='';
+      LEVELS.forEach((pairs, i)=>{
+        const opt=document.createElement('option');
+        opt.value=pairs; opt.textContent=`المستوى ${i+1} — ${pairs} زوج`;
+        levelSel.appendChild(opt);
+      });
+      levelSel.value = LEVELS[0];
+    }
+
+    function coloredBack(el){
+      // توليد لون عشوائي للخلفية (للبطاقة وهي مقلوبة)
+      const h = Math.floor(Math.random()*360);
+      el.style.background = `linear-gradient(160deg, hsla(${h},70%,55%,.9), hsla(${(h+60)%360},70%,45%,.9))`;
+    }
+
+    // ==================== بناء اللوح ====================
+    function buildBoard(pairs){
+      boardEl.innerHTML='';
+      first = second = null; lock=false; moves=0; matched=0; seconds=0; timeEl.textContent='0:00';
+      totalPairs = pairs; pairsEl.textContent = pairs; matchedEl.textContent = '0'; movesEl.textContent='0';
+
+      // تجهيز البطاقات
+      const chosen = EMOJIS.slice(0, pairs);
+      const deck = shuffle([...chosen, ...chosen]); // مضاعفة ثم خلط
+
+      boardEl.style.gridTemplateColumns = `repeat(auto-fit, minmax(82px, 1fr))`;
+
+      deck.forEach(sym=>{
+        const card = document.createElement('button');
+        card.className='card';
+        card.setAttribute('aria-label','بطاقة');
+        card.innerHTML = `<div class="face back">؟</div><div class="face front">${sym}</div>`;
+        const back = card.querySelector('.back');
+        coloredBack(back);
+        card.addEventListener('click',()=>onFlip(card));
+        boardEl.appendChild(card);
+      });
+
+      startTimer();
+      renderLeaderboard();
+    }
+
+    // ==================== منطق اللعبة ====================
+    function onFlip(card){
+      if(lock || card === first || card.classList.contains('flipped')) return;
+      card.classList.add('flipped');
+
+      if(!first){ first = card; return; }
+
+      second = card; moves++; movesEl.textContent = moves;
+      const a = first.querySelector('.front').textContent;
+      const b = second.querySelector('.front').textContent;
+
+      if(a === b){
+        // مطابقة
+        first.classList.add('match');
+        second.classList.add('match');
+        first.removeEventListener('click', onFlip);
+        second.removeEventListener('click', onFlip);
+        matched++; matchedEl.textContent = matched;
+        first = second = null;
+        if(matched === totalPairs){
+          stopTimer();
+          // حفظ النتيجة لهذا المستوى
+          saveResult(totalPairs, moves, seconds);
+          renderLeaderboard();
+          celebrate();
+        }
+      } else {
+        // غير متطابقة
+        lock = true;
+        first.classList.add('no-match');
+        second.classList.add('no-match');
+        const delay = parseInt(flipDelayInput.value,10) || 800;
+        setTimeout(()=>{
+          first.classList.remove('flipped','no-match');
+          second.classList.remove('flipped','no-match');
+          first = second = null; lock=false;
+        }, delay);
+      }
+    }
+
+    // ==================== مؤثرات الفوز ====================
+    function celebrate(){
+      celebrateLayer.innerHTML = '';
+      celebrateLayer.hidden = false;
+      const EMO = ['🎉','✨','🎊','💫','⭐'];
+      const COUNT = 120;
+      for(let i=0;i<COUNT;i++){
+        const s = document.createElement('span');
+        s.className='confetti';
+        s.textContent = EMO[i%EMO.length];
+        s.style.left = Math.random()*100 + 'vw';
+        s.style.animationDelay = (Math.random()*0.6)+'s';
+        s.style.fontSize = (16 + Math.random()*18)+'px';
+        celebrateLayer.appendChild(s);
+      }
+      setTimeout(()=>{celebrateLayer.hidden = true; celebrateLayer.innerHTML='';}, 4200);
+    }
+
+    // ==================== حفظ النتائج (LocalStorage) ====================
+    const STORAGE_KEY = 'memgame:results';
+
+    function getResults(){
+      try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+      catch{ return {}; }
+    }
+    function setResults(obj){ localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); }
+
+    function saveResult(pairs, moves, seconds){
+      const all = getResults();
+      const key = String(pairs);
+      const arr = all[key] || [];
+      arr.push({ moves, seconds, date: new Date().toISOString() });
+      all[key] = arr;
+      setResults(all);
+    }
+
+    function top3(arr){ return arr.slice().sort((a,b)=> (a.moves-b.moves) || (a.seconds-b.seconds)).slice(0,3); }
+
+    function renderLeaderboard(){
+      const res = getResults();
+      const key = String(parseInt(levelSel.value,10));
+      const arr = res[key] || [];
+      const lb = document.getElementById('leaderboard');
+      const top = top3(arr);
+      lb.innerHTML = top.length
+        ? top.map((r,i)=>`<li>#${i+1} — حركات: <b>${r.moves}</b>, وقت: <b>${fmtTime(r.seconds)}</b></li>`).join('')
+        : '<li>لا توجد نتائج بعد.</li>';
+
+      // أفضل نتيجة لكل مستوى
+      const bestTable = document.getElementById('bestTable');
+      const levels = Object.keys(res).sort((a,b)=>parseInt(a)-parseInt(b));
+      if(!levels.length){ bestTable.innerHTML = '<div class="tip">لا توجد نتائج محفوظة بعد.</div>'; return; }
+      let html = '<table class="table"><thead><tr><th>المستوى</th><th>الأفضل (حركات)</th><th>الوقت</th></tr></thead><tbody>';
+      levels.forEach(k=>{
+        const best = top3(res[k])[0];
+        if(best){ html += `<tr><td>${LEVELS.indexOf(parseInt(k))+1}</td><td>${best.moves}</td><td>${fmtTime(best.seconds)}</td></tr>`; }
+      });
+      html += '</tbody></table>';
+      bestTable.innerHTML = html;
+    }
+
+    clearBtn.addEventListener('click', ()=>{
+      if(confirm('هل تريدين مسح جميع النتائج المحفوظة؟')){
+        localStorage.removeItem(STORAGE_KEY);
+        renderLeaderboard();
+      }
+    });
+
+    // ==================== الأحداث و التهيئة ====================
+    const initDelay = parseInt(flipDelayInput.value,10) || 800; dLabel.textContent = initDelay;
+
+    const restartGame = ()=> buildBoard(parseInt(levelSel.value,10));
+    restartBtn.addEventListener('click', restartGame);
+    levelSel.addEventListener('change', restartGame);
+    flipDelayInput.addEventListener('input', ()=> dLabel.textContent = flipDelayInput.value);
+
+    // ثيم مع انتقال ناعم وحفظ التفضيل
+    const themeBtn = document.getElementById('themeBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    function applyTheme(t){
+      document.documentElement.setAttribute('data-theme', t);
+      localStorage.setItem('theme', t);
+      themeIcon.textContent = t==='dark'?'🌙':'☀️';
+    }
+    themeBtn.addEventListener('click', ()=>{
+      const cur = document.documentElement.getAttribute('data-theme');
+      applyTheme(cur==='dark'?'light':'dark');
+    });
+    const saved = localStorage.getItem('theme');
+    if(saved){applyTheme(saved)} else {
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; applyTheme(prefersDark?'dark':'light');
+    }
+
+    // إنشاء مستويات وبناء اللوح أول مرة
+    buildLevelOptions();
+    buildBoard(LEVELS[0]);
+
+    // اختصارات لوحة المفاتيح: R أو ق
+    window.addEventListener('keydown', (e)=>{
+      if(e.key==='r' || e.key==='R' || e.key==='ق'){ restartGame(); }
+    });
+  </script>
+</body>
+</html>
